@@ -3,7 +3,7 @@ spring:
     name: ai-agent
   data:
     mongodb:
-      uri: mongodb://localhost:27017//chat_memory_db
+      uri: mongodb://localhost:27017/chat_memory_db
 server:
   port: 8080
 
@@ -11,7 +11,12 @@ langchain4j:
   open-ai:
     chat-model:
       base-url: https://api.deepseek.com
-      api-key: deepseek-api
+      api-key: ${deepseek-api}
       model-name: deepseek-chat
+    streaming-chat-model:
+      api-key: ${deepseek-api}
+      model-name: deepseek-chat
+      base-url: https://api.deepseek.com
+
 
 

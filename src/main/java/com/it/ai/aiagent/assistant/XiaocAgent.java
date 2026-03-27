@@ -9,7 +9,8 @@ import reactor.core.publisher.Flux;
 
 @AiService(
         wiringMode = AiServiceWiringMode.EXPLICIT,
-        chatModel = "deepseek-chat",
+        chatModel = "openAiChatModel",
+        streamingChatModel = "openAiStreamingChatModel",
         chatMemoryProvider = "memoryProvider"
 )
 public interface XiaocAgent {
