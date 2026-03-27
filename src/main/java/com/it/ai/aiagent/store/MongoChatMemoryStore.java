@@ -46,4 +46,8 @@ public class MongoChatMemoryStore implements ChatMemoryStore {
         Query query = new Query(criteria);
         mongoTemplate.remove(query, ChatMessages.class);
     }
+
+    public List<ChatMessages> getAllSessions() {
+        return mongoTemplate.findAll(ChatMessages.class);
+    }
 }
