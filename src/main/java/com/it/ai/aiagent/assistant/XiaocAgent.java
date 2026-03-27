@@ -11,7 +11,8 @@ import reactor.core.publisher.Flux;
         wiringMode = AiServiceWiringMode.EXPLICIT,
         chatModel = "openAiChatModel",
         streamingChatModel = "openAiStreamingChatModel",
-        chatMemoryProvider = "memoryProvider"
+        chatMemoryProvider = "memoryProvider",
+        contentRetriever = "pineconeContentRetriever"
 )
 public interface XiaocAgent {
     @SystemMessage(fromResource = "prompt-template.txt")

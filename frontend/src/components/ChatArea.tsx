@@ -11,7 +11,13 @@ export interface Message {
   content: string;
 }
 
-export function ChatArea({ currentSessionId }: { currentSessionId: number }) {
+export function ChatArea({ 
+  currentSessionId, 
+  onChatUpdate 
+}: { 
+  currentSessionId: number,
+  onChatUpdate?: () => void
+}) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -98,6 +104,12 @@ export function ChatArea({ currentSessionId }: { currentSessionId: number }) {
           );
         }
       }
+      
+      // 当消息完整接收后，触发更新以刷新侧边栏的历史记录列表
+      if (onChatUpdate) {
+        onChatUpdate();
+      }
+
     } catch (error) {
       console.error("Chat error:", error);
       setMessages((prev) =>

@@ -70,6 +70,16 @@
 			<groupId>dev.langchain4j</groupId>
 			<artifactId>langchain4j-reactor</artifactId>
 		</dependency>
+		<!-- Pinecone 向量数据库 -->
+		<dependency>
+			<groupId>dev.langchain4j</groupId>
+			<artifactId>langchain4j-pinecone</artifactId>
+		</dependency>
+		<!-- 文档解析工具 (Tika 支持 PDF, Word, Txt 等) -->
+		<dependency>
+			<groupId>dev.langchain4j</groupId>
+			<artifactId>langchain4j-document-parser-apache-tika</artifactId>
+		</dependency>
 	</dependencies>
 	<dependencyManagement>
 		<dependencies>

@@ -13,10 +13,19 @@ langchain4j:
       base-url: https://api.deepseek.com
       api-key: ${deepseek-api}
       model-name: deepseek-chat
+    embedding-model:
+      base-url: https://aihubmix.com/v1
+      api-key: sk-7FSC8rpCuanVrFgMAbC4882fB993417aB0B9Aa346417A451
     streaming-chat-model:
       api-key: ${deepseek-api}
       model-name: deepseek-chat
       base-url: https://api.deepseek.com
+
+pinecone:
+  api:
+    key: ${pinecone-api}
+  index:
+    name: agent-index
 
 
 

@@ -8,6 +8,7 @@ import { Menu } from "lucide-react";
 export default function Home() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [currentSessionId, setCurrentSessionId] = useState<number>(1);
+  const [refreshKey, setRefreshKey] = useState<number>(0);
 
   return (
     <div className="flex h-screen w-full bg-[#f8f9fa] overflow-hidden text-slate-800">
@@ -29,6 +30,7 @@ export default function Home() {
           setCurrentSessionId(id);
           setIsSidebarOpen(false);
         }}
+        refreshKey={refreshKey}
       />
 
       {isSidebarOpen && (
@@ -39,7 +41,10 @@ export default function Home() {
       )}
 
       <main className="flex-1 flex flex-col h-full relative max-w-4xl mx-auto w-full pt-14 md:pt-0">
-        <ChatArea currentSessionId={currentSessionId} />
+        <ChatArea 
+          currentSessionId={currentSessionId} 
+          onChatUpdate={() => setRefreshKey(prev => prev + 1)} 
+        />
       </main>
     </div>
   );

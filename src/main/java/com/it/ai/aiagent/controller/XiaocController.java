@@ -37,23 +37,29 @@ public class XiaocController {
     @GetMapping("/history/{memoryId}")
     public List<java.util.Map<String, Object>> history(@PathVariable("memoryId") Long memoryId) {
         List<ChatMessage> messages = mongoChatMemoryStore.getMessages(memoryId);
-        return messages.stream().map(m -> {
-            java.util.Map<String, Object> map = new java.util.HashMap<>();
-            map.put("type", m.type().name());
-            
-            String text = "";
-            if (m instanceof dev.langchain4j.data.message.UserMessage) {
-                text = ((dev.langchain4j.data.message.UserMessage) m).singleText();
-            } else if (m instanceof dev.langchain4j.data.message.AiMessage) {
-                text = ((dev.langchain4j.data.message.AiMessage) m).text();
-            } else if (m instanceof dev.langchain4j.data.message.SystemMessage) {
-                text = ((dev.langchain4j.data.message.SystemMessage) m).text();
-            } else if (m instanceof dev.langchain4j.data.message.ToolExecutionResultMessage) {
-                text = ((dev.langchain4j.data.message.ToolExecutionResultMessage) m).text();
-            }
-            map.put("text", text);
-            return map;
-        }).collect(java.util.stream.Collectors.toList());
+        return messages.stream()
+                // 1. 过滤掉不应该向前端暴露的系统消息（SystemMessage）
+                .filter(m -> !(m instanceof dev.langchain4j.data.message.SystemMessage))
+                .map(m -> {
+                    java.util.Map<String, Object> map = new java.util.HashMap<>();
+                    map.put("type", m.type().name());
+                    
+                    String text = "";
+                    if (m instanceof dev.langchain4j.data.message.UserMessage) {
+                        text = ((dev.langchain4j.data.message.UserMessage) m).singleText();
+                        // 2. 移除 LangChain4j 自动注入的 RAG 上下文提示
+                        // LangChain4j 的默认拼接格式是: "{用户原始问题}\n\nAnswer using the following information:\n{文档内容}"
+                        if (text != null && text.contains("\n\nAnswer using the following information:\n")) {
+                            text = text.split("\n\nAnswer using the following information:\n")[0];
+                        }
+                    } else if (m instanceof dev.langchain4j.data.message.AiMessage) {
+                        text = ((dev.langchain4j.data.message.AiMessage) m).text();
+                    } else if (m instanceof dev.langchain4j.data.message.ToolExecutionResultMessage) {
+                        text = ((dev.langchain4j.data.message.ToolExecutionResultMessage) m).text();
+                    }
+                    map.put("text", text);
+                    return map;
+                }).collect(java.util.stream.Collectors.toList());
     }
 
     @Operation(summary = "获取所有历史会话列表")
@@ -69,7 +75,12 @@ public class XiaocController {
                 List<ChatMessage> parsedMsgs = dev.langchain4j.data.message.ChatMessageDeserializer.messagesFromJson(cm.getContent());
                 for (ChatMessage msg : parsedMsgs) {
                     if (msg instanceof dev.langchain4j.data.message.UserMessage) {
-                        title = ((dev.langchain4j.data.message.UserMessage) msg).singleText();
+                        String text = ((dev.langchain4j.data.message.UserMessage) msg).singleText();
+                        // 过滤掉 RAG 内容作为侧边栏标题
+                        if (text != null && text.contains("\n\nAnswer using the following information:\n")) {
+                            text = text.split("\n\nAnswer using the following information:\n")[0];
+                        }
+                        title = text;
                         if (title.length() > 20) title = title.substring(0, 20) + "...";
                         break;
                     }
