@@ -1,9 +1,10 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { MessageSquare, Plus, X, Database } from "lucide-react";
+import { MessageSquare, Plus, X, Database, CalendarClock } from "lucide-react";
 import { useEffect, useState } from "react";
 import { UploadModal } from "./UploadModal";
+import { StudyPlanModal } from "./StudyPlanModal";
 
 interface Session {
   memoryId: number;
@@ -21,6 +22,7 @@ interface SidebarProps {
 export function Sidebar({ isOpen, onClose, currentSessionId, onSelectSession, refreshKey = 0 }: SidebarProps) {
   const [sessions, setSessions] = useState<Session[]>([]);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+  const [isStudyPlanOpen, setIsStudyPlanOpen] = useState(false);
 
   useEffect(() => {
     fetch('/api/agent/history/sessions')
@@ -57,6 +59,14 @@ export function Sidebar({ isOpen, onClose, currentSessionId, onSelectSession, re
           >
             <Database size={18} />
           </button>
+
+          <button
+            onClick={() => setIsStudyPlanOpen(true)}
+            title="学习计划提醒"
+            className="flex items-center justify-center bg-white hover:bg-slate-50 border border-slate-200 transition-colors p-3 rounded-2xl text-slate-600 shadow-sm"
+          >
+            <CalendarClock size={18} />
+          </button>
           
           <button onClick={onClose} className="md:hidden p-2 rounded-2xl hover:bg-slate-200">
             <X size={20} />
@@ -84,6 +94,11 @@ export function Sidebar({ isOpen, onClose, currentSessionId, onSelectSession, re
       <UploadModal 
         isOpen={isUploadModalOpen} 
         onClose={() => setIsUploadModalOpen(false)} 
+      />
+
+      <StudyPlanModal
+        isOpen={isStudyPlanOpen}
+        onClose={() => setIsStudyPlanOpen(false)}
       />
     </>
   );

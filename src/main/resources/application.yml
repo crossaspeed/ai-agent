@@ -1,6 +1,14 @@
 spring:
   application:
     name: ai-agent
+  datasource:
+    url: jdbc:mysql://localhost:3306/ai_agent?useUnicode=true&characterEncoding=utf8&connectionCollation=utf8mb4_unicode_ci&serverTimezone=Asia/Shanghai
+    username: root
+    password: kx6855253
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  sql:
+    init:
+      mode: always
   data:
     mongodb:
       uri: mongodb://localhost:27017/chat_memory_db
@@ -26,6 +34,14 @@ pinecone:
     key: ${pinecone-api}
   index:
     name: agent-index
+
+feishu:
+  app-id: cli_a94deb3b6cf89cce
+  app-secret: ZEFUg3I3OowRGZBvnXJobgMWQnavzNlV
+
+scheduler:
+  reminder:
+    fixed-delay-ms: 60000
 
 
 
