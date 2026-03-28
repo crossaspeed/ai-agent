@@ -14,6 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import com.it.ai.aiagent.store.TopicRepository;
+import com.it.ai.aiagent.bean.Topic;
+import java.util.List;
 
 import java.io.InputStream;
 import java.util.HashMap;
@@ -22,6 +25,7 @@ import java.util.Map;
 @Tag(name = "知识库管理")
 @RestController
 @RequestMapping("/knowledge")
+@org.springframework.web.bind.annotation.CrossOrigin(origins = "*")
 public class KnowledgeController {
 
     @Autowired
@@ -29,6 +33,15 @@ public class KnowledgeController {
 
     @Autowired
     private EmbeddingStore<TextSegment> pineconeEmbeddingStore;
+
+    @Autowired
+    private TopicRepository topicRepository;
+
+    @Operation(summary = "获取所有已上传的主题")
+    @GetMapping("/topics")
+    public List<Topic> getTopics() {
+        return topicRepository.findAll();
+    }
 
     @Operation(summary = "上传文档到向量数据库")
     @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -57,6 +70,16 @@ public class KnowledgeController {
 
             // 3. 执行切分、向量化、入库
             ingestor.ingest(document);
+            
+            Topic t = topicRepository.findByName(topic);
+            if (t == null) {
+                t = new Topic();
+                t.setName(topic);
+                t.setDocCount(1);
+            } else {
+                t.setDocCount(t.getDocCount() + 1);
+            }
+            topicRepository.save(t);
             
             result.put("status", "success");
             result.put("message", "文档上传并向量化成功！主题：" + topic);

@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { ChatInput } from "./ChatInput";
 import { MessageBubble } from "./MessageBubble";
+import { DataCards } from "./DataCards";
 import { motion } from "framer-motion";
 
 export interface Message {
@@ -210,6 +211,9 @@ export function ChatArea({
             key={msg.id}
           >
             <MessageBubble message={msg} />
+            {msg.id === "welcome" && messages.length === 1 && (
+              <DataCards onSelect={(topic) => handleSendMessage(`我想测验主题：${topic}`)} />
+            )}
           </motion.div>
         ))}
       </div>
