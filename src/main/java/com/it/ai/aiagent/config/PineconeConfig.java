@@ -27,10 +27,10 @@ public class PineconeConfig {
     @Value("${pinecone.index.name}")
     private String pineconeIndex;
 
-    @Value("${langchain4j.open-ai.embedding-model.api-key:demo}")
+    @Value("${langchain4j.open-ai.embedding-model.api-key}")
     private String embeddingApiKey;
 
-    @Value("${langchain4j.open-ai.embedding-model.base-url:https://api.openai.com/v1}")
+    @Value("${langchain4j.open-ai.embedding-model.base-url}")
     private String embeddingBaseUrl;
 
     @Bean

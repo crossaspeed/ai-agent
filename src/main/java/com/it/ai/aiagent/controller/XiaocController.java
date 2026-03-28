@@ -13,13 +13,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import reactor.core.publisher.Flux;
 
 import java.util.List;
 
 @Tag(name = "我的智能体")
 @RestController
 @RequestMapping("/agent")
+@org.springframework.web.bind.annotation.CrossOrigin(origins = "*")
 public class XiaocController {
     @Autowired
     private XiaocAgent xiaocAgent;
@@ -28,9 +28,32 @@ public class XiaocController {
     private MongoChatMemoryStore mongoChatMemoryStore;
 
     @Operation(summary = "对话")
-    @PostMapping("/chat")
-    public Flux<String> chat(@RequestBody ChatForm chatForm) {
-        return xiaocAgent.chat(chatForm.getMemoryId(), chatForm.getMessage());
+    @PostMapping(value = "/chat", produces = org.springframework.http.MediaType.TEXT_EVENT_STREAM_VALUE)
+    public org.springframework.web.servlet.mvc.method.annotation.SseEmitter chat(@RequestBody ChatForm chatForm, jakarta.servlet.http.HttpServletResponse response) {
+        if (response != null) {
+            response.setHeader("Cache-Control", "no-cache");
+            response.setHeader("X-Accel-Buffering", "no");
+            response.setHeader("Connection", "keep-alive");
+        }
+        org.springframework.web.servlet.mvc.method.annotation.SseEmitter emitter = new org.springframework.web.servlet.mvc.method.annotation.SseEmitter(120000L);
+        try {
+            emitter.send(org.springframework.web.servlet.mvc.method.annotation.SseEmitter.event().comment("stream-start"));
+        } catch (Exception ignored) {
+        }
+        
+        dev.langchain4j.service.TokenStream tokenStream = xiaocAgent.chat(chatForm.getMemoryId(), chatForm.getMessage());
+        tokenStream.onPartialResponse(token -> {
+            try {
+                emitter.send(org.springframework.web.servlet.mvc.method.annotation.SseEmitter.event().data(token));
+            } catch (Exception e) {
+                emitter.completeWithError(e);
+            }
+        })
+        .onCompleteResponse(res -> emitter.complete())
+        .onError(emitter::completeWithError)
+        .start();
+        
+        return emitter;
     }
 
     @Operation(summary = "查看历史聊天")

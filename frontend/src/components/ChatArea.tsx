@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { ChatInput } from "./ChatInput";
 import { MessageBubble } from "./MessageBubble";
 import { motion } from "framer-motion";
@@ -20,6 +20,13 @@ export function ChatArea({
 }) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const messageListRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = messageListRef.current;
+    if (!el) return;
+    el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
+  }, [messages]);
 
   // 组件挂载或切换 session 时获取历史记录
   useEffect(() => {
@@ -60,12 +67,18 @@ export function ChatArea({
     setIsLoading(true);
 
     const aiMsgId = (Date.now() + 1).toString();
-    setMessages((prev) => [...prev, { id: aiMsgId, role: "ai", content: "" }]);
+    setMessages((prev) => [
+      ...prev,
+      { id: aiMsgId, role: "ai", content: "正在检索知识库并生成回答..." },
+    ]);
 
     try {
       const response = await fetch('/api/agent/chat', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Accept': 'text/event-stream'
+        },
         body: JSON.stringify({ memoryId: currentSessionId, message: content }),
       });
 
@@ -78,31 +91,95 @@ export function ChatArea({
       const decoder = new TextDecoder("utf-8");
       
       let aiText = "";
+      let buffer = "";
       let done = false;
+      let streamMode: "unknown" | "sse" | "text" = "unknown";
+      let flushPending = false;
+      let hasReceivedContent = false;
+
+      const flushAiText = () => {
+        setMessages((prev) =>
+          prev.map((msg) =>
+            msg.id === aiMsgId ? { ...msg, content: aiText } : msg
+          )
+        );
+      };
+
+      const scheduleFlush = () => {
+        if (flushPending) return;
+        flushPending = true;
+        requestAnimationFrame(() => {
+          flushPending = false;
+          flushAiText();
+        });
+      };
+
+      const appendSseLine = (line: string) => {
+        const payload = line.substring(5).replace(/^\s/, "");
+        if (payload.length > 0) {
+          hasReceivedContent = true;
+        }
+        aiText += payload;
+      };
 
       while (!done) {
         const { value, done: readerDone } = await reader.read();
         done = readerDone;
         if (value) {
           const chunk = decoder.decode(value, { stream: true });
-          
-          let textToAdd = chunk;
-          if (textToAdd.includes('data:')) {
-             textToAdd = textToAdd
-               .split('\n')
-               .filter(line => line.startsWith('data:'))
-               .map(line => line.replace('data:', ''))
-               .join('');
+          let updated = false;
+
+          if (streamMode === "unknown") {
+            const trimmed = chunk.trimStart();
+            const looksLikeSse =
+              trimmed.startsWith("data:") ||
+              chunk.includes("\ndata:") ||
+              chunk.includes("\r\ndata:");
+            streamMode = looksLikeSse ? "sse" : "text";
           }
 
-          aiText += textToAdd;
-          
-          setMessages((prev) =>
-            prev.map((msg) =>
-              msg.id === aiMsgId ? { ...msg, content: aiText } : msg
-            )
-          );
+          if (streamMode === "text") {
+            if (chunk.length > 0) {
+              hasReceivedContent = true;
+            }
+            aiText += chunk;
+            updated = true;
+          } else {
+            buffer += chunk;
+            const lines = buffer.split(/\r?\n/);
+            buffer = lines.pop() || "";
+
+            for (const line of lines) {
+              if (!line || line.startsWith(":")) continue;
+              if (line.startsWith("data:")) {
+                appendSseLine(line);
+                updated = true;
+              }
+            }
+          }
+
+          if (updated) {
+            scheduleFlush();
+          }
         }
+      }
+      
+      // 处理最后残留的数据
+      if (streamMode === "sse" && buffer.trim()) {
+        const lines = buffer.split(/\r?\n/);
+        for (const line of lines) {
+          if (!line || line.startsWith(":")) continue;
+          if (line.startsWith("data:")) {
+            appendSseLine(line);
+          }
+        }
+      }
+      if (streamMode === "text" && buffer) {
+        hasReceivedContent = hasReceivedContent || buffer.length > 0;
+        aiText += buffer;
+      }
+      if (hasReceivedContent) {
+        flushAiText();
       }
       
       // 当消息完整接收后，触发更新以刷新侧边栏的历史记录列表
@@ -124,7 +201,7 @@ export function ChatArea({
 
   return (
     <div className="flex flex-col h-full w-full relative">
-      <div className="flex-1 overflow-y-auto px-4 py-6 md:px-8 pb-32 scroll-smooth">
+      <div ref={messageListRef} className="flex-1 overflow-y-auto px-4 py-6 md:px-8 pb-32 scroll-smooth">
         {messages.map((msg, index) => (
           <motion.div
             initial={{ opacity: 0, y: 10 }}
