@@ -38,6 +38,11 @@ pinecone:
 feishu:
   app-id: cli_a94deb3b6cf89cce
   app-secret: ZEFUg3I3OowRGZBvnXJobgMWQnavzNlV
+  bot-open-id: ${feishu-bot-open-id:}
+  callback-verification-token: ${feishu-callback-token:}
+  long-connection:
+    enabled: true
+    worker-threads: 2
 
 scheduler:
   reminder:

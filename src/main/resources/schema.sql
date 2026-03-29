@@ -20,3 +20,18 @@ CREATE TABLE IF NOT EXISTS study_reminder_task (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 ALTER TABLE study_reminder_task CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS feishu_event_log (
+    id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    event_id VARCHAR(128) NOT NULL,
+    message_id VARCHAR(128) NULL,
+    open_id VARCHAR(128) NULL,
+    event_type VARCHAR(128) NULL,
+    raw_body MEDIUMTEXT NULL,
+    process_status TINYINT NOT NULL DEFAULT 0,
+    error_message VARCHAR(1000) NULL,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    UNIQUE KEY uk_feishu_event_id (event_id),
+    INDEX idx_feishu_process_status (process_status)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

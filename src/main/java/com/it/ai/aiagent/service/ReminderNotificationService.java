@@ -50,7 +50,7 @@ public class ReminderNotificationService {
         for (String channel : channels) {
             try {
                 if ("feishu".equals(channel)) {
-                    sendByFeishu(task.getFeishuOpenId(), message);
+                    sendByFeishu(task.getFeishuOpenId(), "open_id", message);
                     sentChannels.append("feishu,");
                 } else {
                     errors.append(channel).append(": 当前渠道未启用; ");
@@ -65,6 +65,14 @@ public class ReminderNotificationService {
         }
 
         return "发送成功渠道: " + sentChannels.substring(0, sentChannels.length() - 1);
+    }
+
+    public void sendFeishuText(String openId, String message) {
+        sendByFeishu(openId, "open_id", message);
+    }
+
+    public void sendFeishuChatText(String chatId, String message) {
+        sendByFeishu(chatId, "chat_id", message);
     }
 
     private String buildMessage(StudyReminderTask task, boolean testMode) {
@@ -90,9 +98,9 @@ public class ReminderNotificationService {
         return dateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")) + " (" + task.getTimezone() + ")";
     }
 
-    private void sendByFeishu(String openId, String message) {
-        if (!StringUtils.hasText(openId)) {
-            throw new IllegalArgumentException("飞书 open_id 未填写");
+    private void sendByFeishu(String receiveId, String receiveIdType, String message) {
+        if (!StringUtils.hasText(receiveId)) {
+            throw new IllegalArgumentException("飞书 receive_id 未填写");
         }
         if (!StringUtils.hasText(feishuAppId) || !StringUtils.hasText(feishuAppSecret)) {
             throw new IllegalArgumentException("飞书 appId/appSecret 未配置");
@@ -100,12 +108,12 @@ public class ReminderNotificationService {
 
         String token = getFeishuTenantToken();
         Map<String, Object> payload = new HashMap<>();
-        payload.put("receive_id", openId);
+        payload.put("receive_id", receiveId);
         payload.put("msg_type", "text");
         payload.put("content", wrapFeishuText(message));
 
         Map<?, ?> response = webClient.post()
-                .uri("https://open.feishu.cn/open-apis/im/v1/messages?receive_id_type=open_id")
+                .uri("https://open.feishu.cn/open-apis/im/v1/messages?receive_id_type=" + receiveIdType)
                 .header("Authorization", "Bearer " + token)
                 .bodyValue(payload)
                 .retrieve()
