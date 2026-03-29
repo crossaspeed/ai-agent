@@ -2,16 +2,16 @@ spring:
   application:
     name: ai-agent
   datasource:
-    url: jdbc:mysql://localhost:3306/ai_agent?useUnicode=true&characterEncoding=utf8&connectionCollation=utf8mb4_unicode_ci&serverTimezone=Asia/Shanghai
-    username: root
-    password: kx6855253
+    url: ${MYSQL_JDBC_URL:jdbc:mysql://localhost:3306/ai_agent?useUnicode=true&characterEncoding=utf8&connectionCollation=utf8mb4_unicode_ci&serverTimezone=Asia/Shanghai}
+    username: ${MYSQL_USER:root}
+    password: ${MYSQL_PASSWORD:}
     driver-class-name: com.mysql.cj.jdbc.Driver
   sql:
     init:
       mode: always
   data:
     mongodb:
-      uri: mongodb://localhost:27017/chat_memory_db
+      uri: ${MONGODB_URI:mongodb://localhost:27017/chat_memory_db}
 server:
   port: 8080
 
@@ -19,25 +19,25 @@ langchain4j:
   open-ai:
     chat-model:
       base-url: https://api.deepseek.com
-      api-key: ${deepseek-api}
+      api-key: ${DEEPSEEK_API_KEY:}
       model-name: deepseek-chat
     embedding-model:
       base-url: https://aihubmix.com/v1
-      api-key: sk-7FSC8rpCuanVrFgMAbC4882fB993417aB0B9Aa346417A451
+      api-key: ${EMBEDDING_API_KEY:}
     streaming-chat-model:
-      api-key: ${deepseek-api}
+      api-key: ${DEEPSEEK_API_KEY:}
       model-name: deepseek-chat
       base-url: https://api.deepseek.com
 
 pinecone:
   api:
-    key: ${pinecone-api}
+    key: ${PINECONE_API_KEY:}
   index:
     name: agent-index
 
 feishu:
-  app-id: cli_a94deb3b6cf89cce
-  app-secret: ZEFUg3I3OowRGZBvnXJobgMWQnavzNlV
+  app-id: ${FEISHU_APP_ID:}
+  app-secret: ${FEISHU_APP_SECRET:}
   bot-open-id: ${feishu-bot-open-id:}
   callback-verification-token: ${feishu-callback-token:}
   long-connection:

@@ -1,0 +1,11 @@
+# CODEOWNERS
+
+* @crossaspeed
+
+/src/main/java/ @crossaspeed
+/src/main/resources/ @crossaspeed
+
+/frontend/ @crossaspeed
+
+/deploy/ @crossaspeed
+/.github/ @crossaspeed

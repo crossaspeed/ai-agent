@@ -2,6 +2,7 @@ package com.it.ai.aiagent.config;
 
 import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.store.embedding.EmbeddingStore;
+import dev.langchain4j.store.embedding.inmemory.InMemoryEmbeddingStore;
 import dev.langchain4j.store.embedding.pinecone.PineconeEmbeddingStore;
 import dev.langchain4j.rag.content.retriever.ContentRetriever;
 import dev.langchain4j.rag.content.retriever.EmbeddingStoreContentRetriever;
@@ -13,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 
@@ -45,6 +47,11 @@ public class PineconeConfig {
 
     @Bean
     public EmbeddingStore<TextSegment> pineconeEmbeddingStore() {
+        if (!StringUtils.hasText(pineconeApiKey)) {
+            log.warn("未配置 Pinecone API Key，已降级为内存向量库(InMemoryEmbeddingStore)。");
+            return new InMemoryEmbeddingStore<>();
+        }
+
         try {
             Pinecone pc = new Pinecone.Builder(pineconeApiKey).build();
             List<IndexModel> indexes = pc.listIndexes().getIndexes();
@@ -70,14 +77,14 @@ public class PineconeConfig {
             } else {
                 log.info("发现已存在的 Pinecone 索引 '{}'，跳过创建步骤。", pineconeIndex);
             }
+            return PineconeEmbeddingStore.builder()
+                    .apiKey(pineconeApiKey)
+                    .index(pineconeIndex)
+                    .build();
         } catch (Exception e) {
-            log.error("尝试自动创建 Pinecone 索引时发生异常 (请在控制台手动创建 1536维度的 agent-index): {}", e.getMessage());
+            log.error("Pinecone 初始化失败，已降级为内存向量库(InMemoryEmbeddingStore): {}", e.getMessage());
+            return new InMemoryEmbeddingStore<>();
         }
-
-        return PineconeEmbeddingStore.builder()
-                .apiKey(pineconeApiKey)
-                .index(pineconeIndex)
-                .build();
     }
 
     @Bean
