@@ -15,7 +15,7 @@ Please do **not** open public issues for security vulnerabilities.
 
 Report privately using one of these channels (replace placeholders before publishing):
 
-- Email: `security@example.com`
+- Email: `crossaspeed@gmail.com`
 - Maintainer contact: open a private channel first
 
 Please include:

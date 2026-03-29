@@ -45,7 +45,7 @@ an individual is officially representing the project in public spaces.
 ## Enforcement
 
 Instances of abusive, harassing, or otherwise unacceptable behavior may be
-reported to the maintainers at `conduct@example.com`.
+reported to the maintainers at `crossaspeed@gmail.com`.
 All complaints will be reviewed and investigated promptly and fairly.
 
 ## Enforcement Guidelines

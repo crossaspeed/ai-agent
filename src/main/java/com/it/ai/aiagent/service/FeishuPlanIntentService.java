@@ -51,6 +51,11 @@ public class FeishuPlanIntentService {
             return handleUpdate(openId, userText);
         }
 
+        // 仅当命中明确“创建”语义时才会落到创建流程，避免查询语句被误创建。
+        if (!isCreateIntent(userText)) {
+            return PlanProcessResult.ignored("未识别到创建/查询/修改/删除学习计划意图");
+        }
+
         // 1) 优先尝试 LLM 抽取结构化计划。
         StudyPlanExtractResult extracted = tryExtractByAi(userText);
         // 2) 标准化 + 兜底规则解析（支持“主题依次是 ...”）。
@@ -242,18 +247,64 @@ public class FeishuPlanIntentService {
         return text.contains("修改") || text.contains("改成") || text.contains("改为") || text.contains("调整") || text.contains("推迟") || text.contains("提前");
     }
 
+    private boolean isCreateIntent(String text) {
+        if (!StringUtils.hasText(text)) {
+            return false;
+        }
+
+        boolean hasCreateVerb = text.contains("创建")
+                || text.contains("制定")
+                || text.contains("安排")
+                || text.contains("新增")
+                || text.contains("生成")
+                || text.contains("做个")
+                || text.contains("做一份")
+                || text.contains("帮我定")
+                || text.contains("帮我安排")
+                || text.contains("帮我创建");
+
+        if (hasCreateVerb) {
+            return true;
+        }
+
+        // 没有显式创建动词时，至少要有“时间安排”信号，避免把纯问句当创建。
+        boolean hasScheduleHint = Pattern.compile("(\\d{4}-\\d{1,2}-\\d{1,2})|(\\d{1,2}[:：]\\d{2})|(每天|每日|明天|后天|今晚|明晚|下周)")
+                .matcher(text)
+                .find();
+        boolean hasPlanDomainWord = text.contains("学习计划") || text.contains("提醒") || text.toLowerCase(Locale.ROOT).contains("rag");
+        return hasScheduleHint && hasPlanDomainWord;
+    }
+
     private boolean isQueryIntent(String text) {
         if (!StringUtils.hasText(text)) {
             return false;
         }
-        return text.contains("查询")
+        boolean containsQueryWord = text.contains("查询")
                 || text.contains("查看")
                 || text.contains("看看")
                 || text.contains("有哪些")
                 || text.contains("我的计划")
                 || text.contains("今天")
                 || text.contains("明天")
-                || text.contains("后天");
+                || text.contains("后天")
+                || text.contains("接下来几天")
+                || text.contains("制定了什么")
+                || text.contains("什么学习计划")
+                || text.contains("计划是什么")
+                || text.contains("都有什么计划");
+
+        if (containsQueryWord) {
+            return true;
+        }
+
+        boolean hasPlanNoun = text.contains("学习计划") || text.contains("计划");
+        boolean hasQuestionTone = text.contains("什么")
+                || text.contains("哪些")
+                || text.contains("多少")
+                || text.contains("吗")
+                || text.contains("?")
+                || text.contains("？");
+        return hasPlanNoun && hasQuestionTone;
     }
 
     private QueryCommand parseQueryCommand(String text) {
