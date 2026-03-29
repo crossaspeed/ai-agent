@@ -27,30 +27,50 @@ public class XiaocController {
     @Autowired
     private MongoChatMemoryStore mongoChatMemoryStore;
 
+    /**
+     * 方法的作用流程：用户发送一句话->后端调用大模型->大模型每吐出一个片段就推送给前端展示
+     * @param chatForm
+     * @param response
+     * @return
+     */
     @Operation(summary = "对话")
+    //produces 声明响应的内容为text/event-stream
+    // 1. 告诉spring这是流式响应
+    // 2. 告诉前端按照SSE协议持续接收内容
     @PostMapping(value = "/chat", produces = org.springframework.http.MediaType.TEXT_EVENT_STREAM_VALUE)
     public org.springframework.web.servlet.mvc.method.annotation.SseEmitter chat(@RequestBody ChatForm chatForm, jakarta.servlet.http.HttpServletResponse response) {
         if (response != null) {
+            //每次进行请求的时候都要进行验证操作
             response.setHeader("Cache-Control", "no-cache");
+            //Nginx作为中间层的时候，默认会为后端缓存，设置这个之后，Nginx会禁用缓存，收到数据立马转发给客户端
             response.setHeader("X-Accel-Buffering", "no");
+            //这次响应结束之后，不关闭TCP连接，后续的连接都用这条连接
             response.setHeader("Connection", "keep-alive");
         }
+        //SseEmitter SpringMVC提供的SSE推送对象
         org.springframework.web.servlet.mvc.method.annotation.SseEmitter emitter = new org.springframework.web.servlet.mvc.method.annotation.SseEmitter(120000L);
         try {
+            //发送了一个注释事件，用作把连接件一起来
+            //send方法，推送一条事件
             emitter.send(org.springframework.web.servlet.mvc.method.annotation.SseEmitter.event().comment("stream-start"));
         } catch (Exception ignored) {
         }
-        
+        //LangChain4j 的流式输出对象
         dev.langchain4j.service.TokenStream tokenStream = xiaocAgent.chat(chatForm.getMemoryId(), chatForm.getMessage());
+        //每来一个token就执行这个onPartialResponse
         tokenStream.onPartialResponse(token -> {
             try {
+                //推送一条事件（token）
                 emitter.send(org.springframework.web.servlet.mvc.method.annotation.SseEmitter.event().data(token));
             } catch (Exception e) {
                 emitter.completeWithError(e);
             }
         })
+                //模型完整输出
         .onCompleteResponse(res -> emitter.complete())
+                //生成中出现的错误
         .onError(emitter::completeWithError)
+                //调用.start()才会开始流式调用
         .start();
         
         return emitter;
@@ -65,9 +85,12 @@ public class XiaocController {
                 .filter(m -> !(m instanceof dev.langchain4j.data.message.SystemMessage))
                 .map(m -> {
                     java.util.Map<String, Object> map = new java.util.HashMap<>();
+                    //type的作用：判断是ai的消息还是用户的消息
                     map.put("type", m.type().name());
                     
                     String text = "";
+                    // 判断这个消息属于那个子类
+                    //将消息转换成前端容易渲染的格式
                     if (m instanceof dev.langchain4j.data.message.UserMessage) {
                         text = ((dev.langchain4j.data.message.UserMessage) m).singleText();
                         // 2. 移除 LangChain4j 自动注入的 RAG 上下文提示
@@ -97,6 +120,7 @@ public class XiaocController {
             try {
                 List<ChatMessage> parsedMsgs = dev.langchain4j.data.message.ChatMessageDeserializer.messagesFromJson(cm.getContent());
                 for (ChatMessage msg : parsedMsgs) {
+                    //提取用户的第一句话当作标题
                     if (msg instanceof dev.langchain4j.data.message.UserMessage) {
                         String text = ((dev.langchain4j.data.message.UserMessage) msg).singleText();
                         // 过滤掉 RAG 内容作为侧边栏标题
@@ -104,6 +128,7 @@ public class XiaocController {
                             text = text.split("\n\nAnswer using the following information:\n")[0];
                         }
                         title = text;
+                        //如果用户的第一句话过长，那么就进行阶段的操作
                         if (title.length() > 20) title = title.substring(0, 20) + "...";
                         break;
                     }
