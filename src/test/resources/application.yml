@@ -1,0 +1,41 @@
+spring:
+  main:
+    lazy-initialization: true
+  sql:
+    init:
+      mode: never
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/ai_agent?useUnicode=true&characterEncoding=utf8&connectionCollation=utf8mb4_unicode_ci&serverTimezone=Asia/Shanghai
+    username: test
+    password: test
+    hikari:
+      initialization-fail-timeout: -1
+  data:
+    mongodb:
+      uri: mongodb://127.0.0.1:27017/chat_memory_db
+
+langchain4j:
+  open-ai:
+    chat-model:
+      api-key: test-key
+      base-url: https://api.deepseek.com
+      model-name: deepseek-chat
+    streaming-chat-model:
+      api-key: test-key
+      base-url: https://api.deepseek.com
+      model-name: deepseek-chat
+    embedding-model:
+      api-key: test-key
+      base-url: https://aihubmix.com/v1
+
+pinecone:
+  api:
+    key: ""
+  index:
+    name: agent-index
+
+feishu:
+  app-id: ""
+  app-secret: ""
+  long-connection:
+    enabled: false

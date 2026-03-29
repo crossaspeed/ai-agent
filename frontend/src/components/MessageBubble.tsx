@@ -25,7 +25,7 @@ export function MessageBubble({ message }: { message: Message }) {
             remarkPlugins={[remarkGfm]}
             components={{
               code(props) {
-                const { children, className, node, ref, ...rest } = props;
+                const { children, className, ...rest } = props;
                 const match = /language-(\w+)/.exec(className || "");
                 return match ? (
                   <div className="rounded-xl overflow-hidden my-3 border border-slate-200">
@@ -33,7 +33,7 @@ export function MessageBubble({ message }: { message: Message }) {
                       {match[1]}
                     </div>
                     <SyntaxHighlighter
-                      style={oneLight as any}
+                      style={oneLight}
                       language={match[1]}
                       PreTag="div"
                       customStyle={{ margin: 0, padding: '1rem', background: '#fafafa', fontSize: '13px' }}

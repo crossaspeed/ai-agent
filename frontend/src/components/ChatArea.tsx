@@ -12,6 +12,12 @@ export interface Message {
   content: string;
 }
 
+interface HistoryMessage {
+  type?: string;
+  text?: string;
+  content?: string;
+}
+
 export function ChatArea({ 
   currentSessionId, 
   onChatUpdate 
@@ -39,7 +45,7 @@ export function ChatArea({
       })
       .then((data) => {
         if (Array.isArray(data) && data.length > 0) {
-          const historyMsgs: Message[] = data.map((m: any, idx: number) => ({
+          const historyMsgs: Message[] = data.map((m: HistoryMessage, idx: number) => ({
             id: `hist-${idx}`,
             role: m.type === "USER" ? "user" : "ai",
             content: m.text || m.content || "", 
@@ -203,7 +209,7 @@ export function ChatArea({
   return (
     <div className="flex flex-col h-full w-full relative">
       <div ref={messageListRef} className="flex-1 overflow-y-auto px-4 py-6 md:px-8 pb-32 scroll-smooth">
-        {messages.map((msg, index) => (
+        {messages.map((msg) => (
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}

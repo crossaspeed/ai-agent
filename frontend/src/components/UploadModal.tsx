@@ -41,7 +41,7 @@ export function UploadModal({ isOpen, onClose }: UploadModalProps) {
       } else {
         setMessage({ text: data.message || "上传失败", type: "error" });
       }
-    } catch (err) {
+    } catch {
       setMessage({ text: "网络或服务器错误，请重试", type: "error" });
     } finally {
       setIsUploading(false);

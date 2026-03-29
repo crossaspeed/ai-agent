@@ -32,6 +32,10 @@ interface StudyPlanModalProps {
   onClose: () => void;
 }
 
+function errorMessageOf(error: unknown, fallback: string): string {
+  return error instanceof Error && error.message ? error.message : fallback;
+}
+
 function toDateInput(date: Date) {
   const y = date.getFullYear();
   const m = String(date.getMonth() + 1).padStart(2, "0");
@@ -59,7 +63,7 @@ export function StudyPlanModal({ isOpen, onClose }: StudyPlanModalProps) {
   const [planName, setPlanName] = useState("接下来一周学习计划");
   const [days, setDays] = useState<DayForm[]>(getUpcomingSevenDays());
   const [timezone, setTimezone] = useState("Asia/Shanghai");
-  const [channels, setChannels] = useState<string[]>(["feishu"]);
+  const channels: string[] = ["feishu"];
   const [feishuOpenId, setFeishuOpenId] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [tasks, setTasks] = useState<StudyTaskView[]>([]);
@@ -86,7 +90,7 @@ export function StudyPlanModal({ isOpen, onClose }: StudyPlanModalProps) {
       if (!res.ok) throw new Error("查询失败");
       const data = await res.json();
       setTasks(Array.isArray(data) ? data : []);
-    } catch (error) {
+    } catch {
       setMessage({ type: "error", text: "读取任务列表失败，请稍后重试" });
     } finally {
       setLoadingTasks(false);
@@ -126,8 +130,8 @@ export function StudyPlanModal({ isOpen, onClose }: StudyPlanModalProps) {
       }
       setMessage({ type: "success", text: `保存成功，已创建 ${data.created} 条提醒任务` });
       await loadTasks();
-    } catch (error: any) {
-      setMessage({ type: "error", text: error?.message || "保存失败" });
+    } catch (error: unknown) {
+      setMessage({ type: "error", text: errorMessageOf(error, "保存失败") });
     } finally {
       setIsSubmitting(false);
     }
@@ -143,8 +147,8 @@ export function StudyPlanModal({ isOpen, onClose }: StudyPlanModalProps) {
         throw new Error(data?.message || "更新状态失败");
       }
       await loadTasks();
-    } catch (error: any) {
-      setMessage({ type: "error", text: error?.message || "更新状态失败" });
+    } catch (error: unknown) {
+      setMessage({ type: "error", text: errorMessageOf(error, "更新状态失败") });
     }
   };
 
@@ -158,8 +162,8 @@ export function StudyPlanModal({ isOpen, onClose }: StudyPlanModalProps) {
         throw new Error(data?.message || "测试发送失败");
       }
       setMessage({ type: "success", text: data?.result || "测试提醒发送成功" });
-    } catch (error: any) {
-      setMessage({ type: "error", text: error?.message || "测试发送失败" });
+    } catch (error: unknown) {
+      setMessage({ type: "error", text: errorMessageOf(error, "测试发送失败") });
     }
   };
 
