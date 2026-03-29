@@ -11,4 +11,8 @@ public class StudyPlanCreateRequest {
     private List<String> channels;
     private String feishuOpenId;
     private String timezone;
+    private String planBatchId;
+    private String sourceOpenId;
+    private String sourceChannel;
+    private String sourceMsgId;
 }

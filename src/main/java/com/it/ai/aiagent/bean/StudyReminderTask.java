@@ -18,6 +18,11 @@ public class StudyReminderTask {
     private String channelsJson;
     private String feishuOpenId;
     private String timezone;
+    private String planBatchId;
+    private String sourceOpenId;
+    private String sourceChannel;
+    private String sourceMsgId;
+    private Integer deletedFlag;
     private Integer status;
     private Integer sentStatus;
     private String errorMessage;

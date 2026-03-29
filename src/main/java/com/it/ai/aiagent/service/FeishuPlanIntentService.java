@@ -5,6 +5,7 @@ import com.it.ai.aiagent.assistant.StudyPlanExtractAgent;
 import com.it.ai.aiagent.bean.StudyPlanCreateRequest;
 import com.it.ai.aiagent.bean.StudyPlanDayRequest;
 import com.it.ai.aiagent.bean.StudyPlanExtractResult;
+import com.it.ai.aiagent.bean.StudyReminderTaskView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -38,6 +39,18 @@ public class FeishuPlanIntentService {
             return PlanProcessResult.ignored("未命中学习计划意图");
         }
 
+        if (isQueryIntent(userText)) {
+            return handleQuery(openId, userText);
+        }
+
+        if (isDeleteIntent(userText)) {
+            return handleDelete(openId, userText);
+        }
+
+        if (isUpdateIntent(userText)) {
+            return handleUpdate(openId, userText);
+        }
+
         // 1) 优先尝试 LLM 抽取结构化计划。
         StudyPlanExtractResult extracted = tryExtractByAi(userText);
         // 2) 标准化 + 兜底规则解析（支持“主题依次是 ...”）。
@@ -53,6 +66,8 @@ public class FeishuPlanIntentService {
         request.setPlanName(extracted != null && StringUtils.hasText(extracted.getPlanName()) ? extracted.getPlanName() : "飞书学习计划");
         request.setTimezone(extracted != null && StringUtils.hasText(extracted.getTimezone()) ? extracted.getTimezone() : "Asia/Shanghai");
         request.setFeishuOpenId(openId);
+        request.setSourceOpenId(openId);
+        request.setSourceChannel("feishu");
         request.setChannels(List.of("feishu"));
         request.setDays(normalizedDays);
 
@@ -63,6 +78,96 @@ public class FeishuPlanIntentService {
         String firstTime = normalizedDays.get(0).getReminderTime();
         String reply = buildSuccessReply(count, firstDate, firstTime, normalizedDays);
         return PlanProcessResult.success(reply);
+    }
+
+    private PlanProcessResult handleQuery(String openId, String userText) {
+        if (!StringUtils.hasText(openId)) {
+            return PlanProcessResult.failed("无法识别当前用户身份，暂时不能查询计划");
+        }
+
+        QueryCommand command = parseQueryCommand(userText);
+        List<StudyReminderTaskView> tasks = studyPlanService.getTasksByOpenIdInRange(openId, command.from(), command.to());
+        if (tasks.isEmpty()) {
+            return PlanProcessResult.success("你在" + command.label() + "没有学习计划。");
+        }
+
+        StringBuilder builder = new StringBuilder();
+        builder.append("已为你查询到").append(command.label()).append("的学习计划，共 ").append(tasks.size()).append(" 条：\n");
+        int maxCount = Math.min(10, tasks.size());
+        for (int i = 0; i < maxCount; i++) {
+            StudyReminderTaskView task = tasks.get(i);
+            builder.append(i + 1)
+                    .append(". ")
+                    .append(task.getStudyDate())
+                    .append(" ")
+                    .append(task.getReminderTime())
+                    .append(" - ")
+                    .append(task.getRagTopic())
+                    .append("\n");
+        }
+        if (tasks.size() > maxCount) {
+            builder.append("...其余 ").append(tasks.size() - maxCount).append(" 条未展示");
+        }
+        return PlanProcessResult.success(builder.toString().trim());
+    }
+
+    private PlanProcessResult handleDelete(String openId, String userText) {
+        if (!StringUtils.hasText(openId)) {
+            return PlanProcessResult.failed("无法识别当前用户身份，暂时不能删除计划");
+        }
+
+        DeleteCommand command = parseDeleteCommand(userText);
+        if (command == null) {
+            return PlanProcessResult.failed("删除计划请说明日期，或明确说“删除全部计划”");
+        }
+
+        int rows = studyPlanService.deleteTasksByOpenId(openId, command.from(), command.to(), command.timeFilter());
+        if (rows <= 0) {
+            return PlanProcessResult.failed("未找到可删除的学习计划，请确认日期/时间是否正确");
+        }
+
+        String scope = command.from().equals(command.to())
+                ? command.from().toString()
+                : command.from() + " 到 " + command.to();
+        String timeScope = command.timeFilter() == null ? "" : " " + command.timeFilter();
+        return PlanProcessResult.success("已删除 " + rows + " 条学习计划（" + scope + timeScope + "）。");
+    }
+
+    private PlanProcessResult handleUpdate(String openId, String userText) {
+        if (!StringUtils.hasText(openId)) {
+            return PlanProcessResult.failed("无法识别当前用户身份，暂时不能修改计划");
+        }
+
+        UpdateCommand command = parseUpdateCommand(userText);
+        if (command == null || command.targetDate() == null) {
+            return PlanProcessResult.failed("修改计划请至少说明日期，例如：把 2025-01-01 的提醒改到 20:30");
+        }
+
+        int rows = studyPlanService.updateTaskByOpenId(
+                openId,
+                command.targetDate(),
+                command.oldTime(),
+                command.newTime(),
+                command.newTopic(),
+                command.newStudyContent()
+        );
+        if (rows <= 0) {
+            return PlanProcessResult.failed("未匹配到可修改的任务，请确认日期/时间是否准确");
+        }
+
+        StringBuilder reply = new StringBuilder();
+        reply.append("已更新 ").append(rows).append(" 条学习计划（").append(command.targetDate());
+        if (command.oldTime() != null) {
+            reply.append(" ").append(command.oldTime());
+        }
+        reply.append("）。");
+        if (command.newTime() != null) {
+            reply.append(" 新提醒时间：").append(command.newTime()).append("。");
+        }
+        if (StringUtils.hasText(command.newTopic())) {
+            reply.append(" 新主题：").append(command.newTopic()).append("。");
+        }
+        return PlanProcessResult.success(reply.toString());
     }
 
     private String buildSuccessReply(Object createdCount,
@@ -113,7 +218,190 @@ public class FeishuPlanIntentService {
                 || normalized.contains("接下来一周")
                 || normalized.contains("提醒")
                 || normalized.contains("每日")
-                || normalized.contains("rag");
+                || normalized.contains("rag")
+                || normalized.contains("删除")
+                || normalized.contains("取消")
+                || normalized.contains("修改")
+                || normalized.contains("改成")
+                || normalized.contains("查询")
+                || normalized.contains("看看")
+                || normalized.contains("计划");
+    }
+
+    private boolean isDeleteIntent(String text) {
+        if (!StringUtils.hasText(text)) {
+            return false;
+        }
+        return text.contains("删除") || text.contains("取消") || text.contains("清空");
+    }
+
+    private boolean isUpdateIntent(String text) {
+        if (!StringUtils.hasText(text)) {
+            return false;
+        }
+        return text.contains("修改") || text.contains("改成") || text.contains("改为") || text.contains("调整") || text.contains("推迟") || text.contains("提前");
+    }
+
+    private boolean isQueryIntent(String text) {
+        if (!StringUtils.hasText(text)) {
+            return false;
+        }
+        return text.contains("查询")
+                || text.contains("查看")
+                || text.contains("看看")
+                || text.contains("有哪些")
+                || text.contains("我的计划")
+                || text.contains("今天")
+                || text.contains("明天")
+                || text.contains("后天");
+    }
+
+    private QueryCommand parseQueryCommand(String text) {
+        LocalDate today = LocalDate.now();
+        if (!StringUtils.hasText(text)) {
+            return new QueryCommand(today, today.plusDays(13), "接下来14天");
+        }
+
+        LocalDate date = parseFirstDate(text);
+        if (date != null) {
+            return new QueryCommand(date, date, date.toString());
+        }
+
+        if (text.contains("今天")) {
+            return new QueryCommand(today, today, "今天");
+        }
+
+        if (text.contains("明天")) {
+            LocalDate tomorrow = today.plusDays(1);
+            return new QueryCommand(tomorrow, tomorrow, "明天");
+        }
+
+        if (text.contains("后天")) {
+            LocalDate afterTomorrow = today.plusDays(2);
+            return new QueryCommand(afterTomorrow, afterTomorrow, "后天");
+        }
+
+        if (text.contains("一周") || text.contains("7天")) {
+            return new QueryCommand(today, today.plusDays(6), "接下来7天");
+        }
+
+        Matcher matcher = Pattern.compile("(\\d{1,2})\\s*天").matcher(text);
+        if (matcher.find()) {
+            try {
+                int days = Integer.parseInt(matcher.group(1));
+                int safeDays = Math.max(1, Math.min(days, 30));
+                return new QueryCommand(today, today.plusDays(safeDays - 1L), "接下来" + safeDays + "天");
+            } catch (NumberFormatException ignored) {
+                return new QueryCommand(today, today.plusDays(13), "接下来14天");
+            }
+        }
+
+        return new QueryCommand(today, today.plusDays(13), "接下来14天");
+    }
+
+    private DeleteCommand parseDeleteCommand(String text) {
+        if (!StringUtils.hasText(text)) {
+            return null;
+        }
+
+        LocalTime timeFilter = parseFirstTime(text);
+        if (text.contains("全部") || text.contains("所有")) {
+            return new DeleteCommand(LocalDate.now(), LocalDate.now().plusDays(365), timeFilter);
+        }
+
+        LocalDate date = parseFirstDate(text);
+        if (date != null) {
+            return new DeleteCommand(date, date, timeFilter);
+        }
+
+        if (text.contains("今天")) {
+            LocalDate today = LocalDate.now();
+            return new DeleteCommand(today, today, timeFilter);
+        }
+        if (text.contains("明天")) {
+            LocalDate tomorrow = LocalDate.now().plusDays(1);
+            return new DeleteCommand(tomorrow, tomorrow, timeFilter);
+        }
+
+        return null;
+    }
+
+    private UpdateCommand parseUpdateCommand(String text) {
+        if (!StringUtils.hasText(text)) {
+            return null;
+        }
+
+        LocalDate date = parseFirstDate(text);
+        if (date == null) {
+            if (text.contains("今天")) {
+                date = LocalDate.now();
+            } else if (text.contains("明天")) {
+                date = LocalDate.now().plusDays(1);
+            }
+        }
+
+        LocalTime oldTime = null;
+        LocalTime newTime = null;
+
+        Matcher fromTo = Pattern.compile("从\\s*(\\d{1,2}[:：]\\d{2})\\s*(?:改到|改成|改为|调整到)\\s*(\\d{1,2}[:：]\\d{2})").matcher(text);
+        if (fromTo.find()) {
+            oldTime = parseTimeOrFallback(fromTo.group(1), null);
+            newTime = parseTimeOrFallback(fromTo.group(2), null);
+        } else {
+            Matcher singleNew = Pattern.compile("(?:改到|改成|改为|调整到)\\s*(\\d{1,2}[:：]\\d{2})").matcher(text);
+            if (singleNew.find()) {
+                newTime = parseTimeOrFallback(singleNew.group(1), null);
+            }
+        }
+
+        String newTopic = parseFieldByPattern(text, "(?:主题|学习主题|内容)\\s*(?:改到|改成|改为)\\s*([^，,。；;]+)");
+        String newStudyContent = parseFieldByPattern(text, "(?:备注|说明|学习内容)\\s*(?:改到|改成|改为)\\s*([^，,。；;]+)");
+
+        if (date == null) {
+            return null;
+        }
+        if (oldTime == null && newTime == null && !StringUtils.hasText(newTopic) && !StringUtils.hasText(newStudyContent)) {
+            return null;
+        }
+        return new UpdateCommand(date, oldTime, newTime, newTopic, newStudyContent);
+    }
+
+    private LocalDate parseFirstDate(String text) {
+        if (!StringUtils.hasText(text)) {
+            return null;
+        }
+        Matcher matcher = Pattern.compile("(\\d{4}-\\d{1,2}-\\d{1,2})").matcher(text);
+        if (matcher.find()) {
+            try {
+                return LocalDate.parse(matcher.group(1), DateTimeFormatter.ofPattern("yyyy-M-d"));
+            } catch (Exception ignored) {
+                return null;
+            }
+        }
+        return null;
+    }
+
+    private LocalTime parseFirstTime(String text) {
+        if (!StringUtils.hasText(text)) {
+            return null;
+        }
+        Matcher matcher = Pattern.compile("(\\d{1,2}[:：]\\d{2})").matcher(text);
+        if (matcher.find()) {
+            return parseTimeOrFallback(matcher.group(1), null);
+        }
+        return null;
+    }
+
+    private String parseFieldByPattern(String text, String regex) {
+        if (!StringUtils.hasText(text)) {
+            return null;
+        }
+        Matcher matcher = Pattern.compile(regex).matcher(text);
+        if (matcher.find()) {
+            String value = matcher.group(1);
+            return StringUtils.hasText(value) ? value.trim() : null;
+        }
+        return null;
     }
 
     private StudyPlanExtractResult tryExtractByAi(String userText) {
@@ -319,5 +607,18 @@ public class FeishuPlanIntentService {
         public static PlanProcessResult failed(String message) {
             return new PlanProcessResult(true, false, message);
         }
+    }
+
+    private record DeleteCommand(LocalDate from, LocalDate to, LocalTime timeFilter) {
+    }
+
+    private record UpdateCommand(LocalDate targetDate,
+                                 LocalTime oldTime,
+                                 LocalTime newTime,
+                                 String newTopic,
+                                 String newStudyContent) {
+    }
+
+    private record QueryCommand(LocalDate from, LocalDate to, String label) {
     }
 }

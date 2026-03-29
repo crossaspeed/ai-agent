@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -46,6 +47,15 @@ public class StudyPlanService {
         }
 
         List<StudyReminderTask> tasks = new ArrayList<>();
+        String batchId = StringUtils.hasText(request.getPlanBatchId())
+            ? request.getPlanBatchId()
+            : UUID.randomUUID().toString();
+        String sourceOpenId = StringUtils.hasText(request.getSourceOpenId())
+            ? request.getSourceOpenId()
+            : request.getFeishuOpenId();
+        String sourceChannel = StringUtils.hasText(request.getSourceChannel())
+            ? request.getSourceChannel()
+            : "feishu";
         for (StudyPlanDayRequest day : request.getDays()) {
             if (!StringUtils.hasText(day.getRagTopic()) || !StringUtils.hasText(day.getReminderTime()) || !StringUtils.hasText(day.getDate())) {
                 continue;
@@ -62,6 +72,7 @@ public class StudyPlanService {
 
             StudyReminderTask task = new StudyReminderTask();
             task.setPlanName(planName);
+            task.setPlanBatchId(batchId);
             task.setStudyDate(date);
             task.setReminderTime(time);
             task.setTriggerTime(trigger);
@@ -69,7 +80,11 @@ public class StudyPlanService {
             task.setStudyContent(day.getStudyContent());
             task.setChannelsJson(channels);
             task.setFeishuOpenId(request.getFeishuOpenId());
+            task.setSourceOpenId(sourceOpenId);
+            task.setSourceChannel(sourceChannel);
+            task.setSourceMsgId(request.getSourceMsgId());
             task.setTimezone(timezone);
+            task.setDeletedFlag(0);
             task.setStatus(1);
             task.setSentStatus(0);
             tasks.add(task);
@@ -93,6 +108,46 @@ public class StudyPlanService {
         return studyReminderTaskStore.findTasksInRange(from, to).stream()
                 .map(this::toView)
                 .toList();
+    }
+
+    public List<StudyReminderTaskView> getUpcomingTasksByOpenId(String openId, int days) {
+        if (!StringUtils.hasText(openId)) {
+            return List.of();
+        }
+        int safeDays = Math.max(1, Math.min(days, 30));
+        LocalDate from = LocalDate.now();
+        LocalDate to = from.plusDays(safeDays - 1L);
+        return studyReminderTaskStore.findTasksInRangeByOpenId(openId, from, to).stream()
+                .map(this::toView)
+                .toList();
+    }
+
+    public List<StudyReminderTaskView> getTasksByOpenIdInRange(String openId, LocalDate from, LocalDate to) {
+        if (!StringUtils.hasText(openId) || from == null || to == null) {
+            return List.of();
+        }
+        return studyReminderTaskStore.findTasksInRangeByOpenId(openId, from, to).stream()
+                .map(this::toView)
+                .toList();
+    }
+
+    public int deleteTasksByOpenId(String openId, LocalDate from, LocalDate to, LocalTime timeFilter) {
+        if (!StringUtils.hasText(openId) || from == null || to == null) {
+            return 0;
+        }
+        return studyReminderTaskStore.softDeleteByOpenIdAndRange(openId, from, to, timeFilter);
+    }
+
+    public int updateTaskByOpenId(String openId,
+                                  LocalDate targetDate,
+                                  LocalTime oldTime,
+                                  LocalTime newTime,
+                                  String newTopic,
+                                  String newStudyContent) {
+        if (!StringUtils.hasText(openId) || targetDate == null) {
+            return 0;
+        }
+        return studyReminderTaskStore.updateByOpenIdAndDate(openId, targetDate, oldTime, newTime, newTopic, newStudyContent);
     }
 
     public Map<String, Object> updateTaskStatus(Long id, boolean enabled) {
