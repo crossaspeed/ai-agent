@@ -31,9 +31,14 @@ public class StudyPlanService {
     @Autowired
     private ReminderNotificationService reminderNotificationService;
 
+    /**
+     * 将前端页面填写的数据进行数据库的持久化的操作
+     * @param request
+     * @return
+     */
     public Map<String, Object> createWeeklyPlan(StudyPlanCreateRequest request) {
         validateCreateRequest(request);
-
+        // 设置默认值
         String timezone = StringUtils.hasText(request.getTimezone()) ? request.getTimezone() : "Asia/Shanghai";
         String planName = StringUtils.hasText(request.getPlanName()) ? request.getPlanName() : "接下来一周学习计划";
         String channels = request.getChannels().stream()
@@ -45,7 +50,7 @@ public class StudyPlanService {
         if (!StringUtils.hasText(channels)) {
             channels = "feishu";
         }
-
+        // 某些数据为空的话，进行默认操作的处理
         List<StudyReminderTask> tasks = new ArrayList<>();
         String batchId = StringUtils.hasText(request.getPlanBatchId())
             ? request.getPlanBatchId()
@@ -66,10 +71,11 @@ public class StudyPlanService {
             LocalDateTime trigger = LocalDateTime.of(date, time);
 
             // Allow short client-server delays for near-term reminders (e.g. set to 1-2 minutes later).
+            // 如果设定的时间在当前时间的下一分钟，那么进行跳过的操作
             if (trigger.isBefore(LocalDateTime.now().minusMinutes(1))) {
                 continue;
             }
-
+            // 数据库表对象的设置
             StudyReminderTask task = new StudyReminderTask();
             task.setPlanName(planName);
             task.setPlanBatchId(batchId);
@@ -100,7 +106,7 @@ public class StudyPlanService {
                 "message", "周计划已保存"
         );
     }
-
+    // 查询接下来几天的计划 （默认为14天）
     public List<StudyReminderTaskView> getUpcomingTasks(int days) {
         int safeDays = Math.max(1, Math.min(days, 30));
         LocalDate from = LocalDate.now();
@@ -150,6 +156,7 @@ public class StudyPlanService {
         return studyReminderTaskStore.updateByOpenIdAndDate(openId, targetDate, oldTime, newTime, newTopic, newStudyContent);
     }
 
+    //更新语句：启用或者停止某个任务
     public Map<String, Object> updateTaskStatus(Long id, boolean enabled) {
         int rows = studyReminderTaskStore.updateTaskStatus(id, enabled);
         if (rows == 0) {
@@ -162,6 +169,8 @@ public class StudyPlanService {
     }
 
     public Map<String, Object> sendTestReminder(Long id) {
+        // Optional的使用：理解成一个盒子 盒子里面有值，那么久查询到了任务 盒子里面没有值 那么久没有查询到任务
+        // 可能查询不到值 现代业务的常见实践
         Optional<StudyReminderTask> taskOptional = studyReminderTaskStore.findById(id);
         if (taskOptional.isEmpty()) {
             throw new IllegalArgumentException("任务不存在");

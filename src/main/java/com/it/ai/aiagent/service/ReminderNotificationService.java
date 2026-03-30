@@ -116,9 +116,11 @@ public class ReminderNotificationService {
                 .uri("https://open.feishu.cn/open-apis/im/v1/messages?receive_id_type=" + receiveIdType)
                 .header("Authorization", "Bearer " + token)
                 .bodyValue(payload)
+                // 执行请求并准备等待响应
                 .retrieve()
+                // 把响应体按JSON格式解析成MAP的格式
                 .bodyToMono(Map.class)
-                .block(Duration.ofSeconds(10));
+                .block(Duration.ofSeconds(10)); //等待响应，等待时间最多是10s，否则抛出异常
 
         if (response == null || !Integer.valueOf(0).equals(response.get("code"))) {
             throw new IllegalStateException("飞书发送失败: " + response);
