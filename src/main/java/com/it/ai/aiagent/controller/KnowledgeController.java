@@ -44,6 +44,11 @@ public class KnowledgeController {
     }
 
     @Operation(summary = "上传文档到向量数据库")
+    // consumes 指定了客户端在发送请求的时候，HTTPS头必须接受什么类型的格式，这里意味着这个接口表单只接受文件上传的数据
+    // - produces 指定接口返回的数据类型
+    // - params 请求中必须包含某种参数
+    // - headers 请求头中必须包含某种请求头
+    // - name 给这个映射添加一个名字
     @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public Map<String, Object> upload(
             @RequestParam("file") MultipartFile file,
@@ -63,14 +68,19 @@ public class KnowledgeController {
             // 策略调整：对于 Q&A 这种问答式结构，如果回答很长，500字很容易把一个完整的 Q&A 从中间腰斩。
             // 因此我们将 Chunk Size 扩大到 1200，Overlap 扩大到 100，确保大部分的一问一答能被完整包裹在一个 Segment 里
             EmbeddingStoreIngestor ingestor = EmbeddingStoreIngestor.builder()
+                    // 文档分割器，大模型的上下文窗口有限，将大文档切分成小块
+                    //recursive 递归切分 ；1200 表示每个分片的大小 ；100表示两个相邻的分片之间重复的字符数
                     .documentSplitter(DocumentSplitters.recursive(1200, 100))
+                    // 向量化模型
                     .embeddingModel(embeddingModel)
+                    // 向量存储库
                     .embeddingStore(pineconeEmbeddingStore)
                     .build();
 
             // 3. 执行切分、向量化、入库
             ingestor.ingest(document);
-            
+
+            // mongoDB这里存储topic的数据，然后进行计数的工作
             Topic t = topicRepository.findByName(topic);
             if (t == null) {
                 t = new Topic();

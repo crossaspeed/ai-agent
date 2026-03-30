@@ -53,16 +53,25 @@ public class PineconeConfig {
         }
 
         try {
+            //通过apiKey连接到远端的pinecone数据库
             Pinecone pc = new Pinecone.Builder(pineconeApiKey).build();
             List<IndexModel> indexes = pc.listIndexes().getIndexes();
             
             boolean indexExists = false;
+            //判断远端的pinecone数据库存不存在这个索引
             if (indexes != null) {
                 indexExists = indexes.stream().anyMatch(idx -> idx.getName().equals(pineconeIndex));
             }
-
+            //不存在则先进性创建的操作
             if (!indexExists) {
                 log.info("未发现 Pinecone 索引 '{}'，正在尝试自动创建(基于Serverless, aws us-east-1, 1536维度)...", pineconeIndex);
+                // cosine (余弦相似度)：适配自然语言；文本分类/搜索
+                // euclidean (欧氏距离)：图像识别/计算机视觉；传感器数值；分类聚类 (K-Means)
+                // dotproduct (点积)：推荐系统；排序学习
+
+                // 1536 必须跟embeddingModel输出维度相匹配
+                // "aws" 和 "us-east-1" (云平台与区域)
+                // DeletionProtection.DISABLED 是否防止该索引被意外删除
                 pc.createServerlessIndex(
                     pineconeIndex,
                     "cosine",
