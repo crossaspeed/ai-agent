@@ -1,12 +1,15 @@
 # docker部署服务器的操作
 编写dockerfile文件的内容
 这里有两个阶段：源码编译和运行环境
-源码编译：（核心作用：将java源代码编译成.jar包）
+- 源码编译：（核心作用：将java源代码编译成.jar包）
+
 FROM 第一条非注释指令，决定了基础的运行环境
 AS 指定别名 ：后面有一句 COPY --from=build ...，这里的 build 必须和前面的 AS 后面的名字对应
 写法遵循：镜像名:版本号-操作系统/环境描述
 详情参考dockerhub上面的指令
+
 FROM maven:3.9.9-eclipse-temurin-17 AS build
+
 设置容器内的工作目录为/app
 WORKDIR /app
 
@@ -16,7 +19,8 @@ COPY src ./src
 
 RUN mvn -DskipTests clean package org.springframework.boot:spring-boot-maven-plugin:3.2.6:repackage
 
-运行环境：
+- 运行环境：
+
 FROM eclipse-temurin:17-jre
 WORKDIR /app
 
