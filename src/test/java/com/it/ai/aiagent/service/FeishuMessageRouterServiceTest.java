@@ -117,4 +117,51 @@ class FeishuMessageRouterServiceTest {
         verify(feishuPlanIntentService).processPlanIntent("ou_test_user", "TCP三次握手是啥");
         verify(feishuQaService).processQa("ou_test_user", "TCP三次握手是啥");
     }
+
+    @Test
+    void typedRouteShouldHitQaDirectly() {
+        when(feishuQaService.processQa("ou_test_user", "TCP三次握手是啥"))
+                .thenReturn(FeishuQaService.QaProcessResult.success("QA类型直达回答"));
+
+        FeishuMessageRouterService.RouteProcessResult result =
+                routerService.process("ou_test_user", "TCP三次握手是啥", "qa");
+
+        assertTrue(result.handled());
+        assertTrue(result.success());
+        assertEquals("qa", result.route());
+        assertEquals("QA类型直达回答", result.message());
+        verify(feishuQaService).processQa("ou_test_user", "TCP三次握手是啥");
+        verify(feishuPlanIntentService, never()).processPlanIntent(anyString(), anyString());
+    }
+
+    @Test
+    void illegalTypeShouldFallbackToOrderedStrategies() {
+        when(feishuPlanIntentService.processPlanIntent("ou_test_user", "创建学习计划 明晚20:00 学RAG"))
+                .thenReturn(FeishuPlanIntentService.PlanProcessResult.success("计划创建成功"));
+
+        FeishuMessageRouterService.RouteProcessResult result =
+                routerService.process("ou_test_user", "创建学习计划 明晚20:00 学RAG", "unknown");
+
+        assertTrue(result.handled());
+        assertEquals("plan", result.route());
+        assertEquals("计划创建成功", result.message());
+        verify(feishuPlanIntentService).processPlanIntent("ou_test_user", "创建学习计划 明晚20:00 学RAG");
+        verify(feishuQaService, never()).processQa(anyString(), anyString());
+    }
+
+    @Test
+    void nullTypeShouldRemainBackwardCompatible() {
+        when(feishuQaService.processQa("ou_test_user", "考我操作系统"))
+                .thenReturn(FeishuQaService.QaProcessResult.success("兼容模式回答"));
+
+        FeishuMessageRouterService.RouteProcessResult result =
+                routerService.process("ou_test_user", "问答: 考我操作系统", null);
+
+        assertTrue(result.handled());
+        assertTrue(result.success());
+        assertEquals("qa", result.route());
+        assertEquals("兼容模式回答", result.message());
+        verify(feishuQaService).processQa("ou_test_user", "考我操作系统");
+        verify(feishuPlanIntentService, never()).processPlanIntent(anyString(), anyString());
+    }
 }

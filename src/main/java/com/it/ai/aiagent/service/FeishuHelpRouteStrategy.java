@@ -13,9 +13,14 @@ public class FeishuHelpRouteStrategy implements FeishuMessageRouteStrategy {
     }
 
     @Override
+    public String getRouteType() {
+        return "help";
+    }
+
+    @Override
     public FeishuMessageRouterService.RouteProcessResult process(RouteContext context) {
         String text = context.normalizedText();
-        if (!isHelpIntent(text)) {
+        if (!"help".equals(context.routeType()) && !isHelpIntent(text)) {
             return FeishuMessageRouterService.RouteProcessResult.ignored("未命中帮助命令");
         }
         return FeishuMessageRouterService.RouteProcessResult.success(buildHelpMessage(), "help");

@@ -26,7 +26,7 @@ export function MessageBubble({
   }, [maxBubbleWidthPx, message.content, shouldUseShrinkWrap]);
 
   return (
-    <div className={cn("flex w-full mb-6", isUser ? "justify-end" : "justify-start")}>
+    <div className={cn("flex w-full", isUser ? "justify-end" : "justify-start")}>
       <div
         style={
           shrinkWidth

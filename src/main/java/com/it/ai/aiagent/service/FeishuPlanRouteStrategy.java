@@ -15,6 +15,11 @@ public class FeishuPlanRouteStrategy implements FeishuMessageRouteStrategy {
     }
 
     @Override
+    public String getRouteType() {
+        return "plan";
+    }
+
+    @Override
     public FeishuMessageRouterService.RouteProcessResult process(RouteContext context) {
         FeishuPlanIntentService.PlanProcessResult planResult =
                 feishuPlanIntentService.processPlanIntent(context.openId(), context.normalizedText());

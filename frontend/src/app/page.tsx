@@ -40,7 +40,7 @@ export default function Home() {
         />
       )}
 
-      <main className="flex-1 flex flex-col h-full relative max-w-4xl mx-auto w-full pt-14 md:pt-0">
+      <main className="flex-1 flex flex-col h-full min-h-0 relative max-w-4xl mx-auto w-full pt-14 md:pt-0">
         <ChatArea 
           currentSessionId={currentSessionId} 
           onChatUpdate={() => setRefreshKey(prev => prev + 1)} 

@@ -15,6 +15,11 @@ public class FeishuQaFallbackRouteStrategy implements FeishuMessageRouteStrategy
     }
 
     @Override
+    public String getRouteType() {
+        return "qa";
+    }
+
+    @Override
     public FeishuMessageRouterService.RouteProcessResult process(RouteContext context) {
         FeishuQaService.QaProcessResult qaResult = feishuQaService.processQa(context.openId(), context.normalizedText());
         return FeishuMessageRouterService.RouteProcessResult.of(

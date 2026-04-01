@@ -20,6 +20,11 @@ interface HistoryMessage {
   content?: string;
 }
 
+interface SendMessagePayload {
+  message: string;
+  type?: string;
+}
+
 export function ChatArea({ 
   currentSessionId, 
   onChatUpdate 
@@ -182,11 +187,13 @@ export function ChatArea({
       });
   }, [currentSessionId, scrollToBottom]);
 
-  const handleSendMessage = async (content: string) => {
-    if (isLoading || !content.trim()) return;
+  const handleSendMessage = async (payload: SendMessagePayload) => {
+    const content = payload.message?.trim() || "";
+    const requestMessage = content || (payload.type ? `/${payload.type}` : "");
+    if (isLoading || !requestMessage) return;
     isNearBottomRef.current = true;
 
-    const newUserMsg: Message = { id: Date.now().toString(), role: "user", content };
+    const newUserMsg: Message = { id: Date.now().toString(), role: "user", content: requestMessage };
     setMessages((prev) => [...prev, newUserMsg]);
     setIsLoading(true);
 
@@ -203,7 +210,7 @@ export function ChatArea({
           'Content-Type': 'application/json',
           'Accept': 'text/event-stream'
         },
-        body: JSON.stringify({ memoryId: currentSessionId, message: content }),
+        body: JSON.stringify({ memoryId: currentSessionId, message: requestMessage, type: payload.type }),
       });
 
       if (!response.ok) {
@@ -326,8 +333,8 @@ export function ChatArea({
   };
 
   return (
-    <div className="flex flex-col h-full w-full relative">
-      <div ref={messageListRef} className="flex-1 overflow-y-auto px-4 py-6 md:px-8 pb-32">
+    <div className="flex flex-col h-full min-h-0 w-full relative">
+      <div ref={messageListRef} className="flex-1 min-h-0 overflow-y-auto px-4 pt-6 pb-6 md:px-8">
         <div
           style={{
             height: `${rowVirtualizer.getTotalSize()}px`,
@@ -346,6 +353,7 @@ export function ChatArea({
                 key={virtualRow.key}
                 data-index={virtualRow.index}
                 ref={rowVirtualizer.measureElement}
+                className="pb-6"
                 style={{
                   position: "absolute",
                   transform: `translateY(${virtualRow.start}px)`,
@@ -361,7 +369,7 @@ export function ChatArea({
                 >
                   <MessageBubble message={msg} maxBubbleWidthPx={maxBubbleWidthPx} />
                   {msg.id === "welcome" && messages.length === 1 && (
-                    <DataCards onSelect={(topic) => handleSendMessage(`我想测验主题：${topic}`)} />
+                    <DataCards onSelect={(topic) => handleSendMessage({ message: `我想测验主题：${topic}` })} />
                   )}
                 </motion.div>
               </div>
@@ -369,8 +377,8 @@ export function ChatArea({
           })}
         </div>
       </div>
-      
-      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[#f8f9fa] via-[#f8f9fa] to-transparent pt-10 pb-6 px-4 md:px-8">
+
+      <div className="shrink-0 bg-gradient-to-t from-[#f8f9fa] via-[#f8f9fa] to-transparent pt-4 pb-6 px-4 md:px-8">
         <ChatInput onSend={handleSendMessage} />
         <div className="text-center text-[11px] text-slate-400 mt-3">
           AI generated content may be inaccurate.
