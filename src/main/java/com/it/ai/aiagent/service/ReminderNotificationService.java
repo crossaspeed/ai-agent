@@ -86,7 +86,7 @@ public class ReminderNotificationService {
         if (StringUtils.hasText(task.getStudyContent())) {
             msg.append("目标: ").append(task.getStudyContent()).append("\n");
         }
-        msg.append("建议提问: 请帮我复习今天这个 RAG 主题的关键点");
+
         return msg.toString();
     }
 
