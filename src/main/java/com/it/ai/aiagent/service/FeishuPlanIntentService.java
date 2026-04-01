@@ -2,9 +2,11 @@ package com.it.ai.aiagent.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.it.ai.aiagent.assistant.StudyPlanExtractAgent;
+import com.it.ai.aiagent.assistant.StudyPlanIntentAgent;
 import com.it.ai.aiagent.bean.StudyPlanCreateRequest;
 import com.it.ai.aiagent.bean.StudyPlanDayRequest;
 import com.it.ai.aiagent.bean.StudyPlanExtractResult;
+import com.it.ai.aiagent.bean.StudyPlanIntentAnalysisResult;
 import com.it.ai.aiagent.bean.StudyReminderTaskView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,8 +27,16 @@ import java.util.regex.Pattern;
 @Service
 public class FeishuPlanIntentService {
 
+    //如果模型对某个意图的置信度分数 大于或等于 0.75，系统认为“非常确定用户的意图”
+    private static final double AGENT_ROUTE_CONFIDENCE_THRESHOLD = 0.75D;
+    //如果置信度分数介于 0.50 和 0.75 之间，系统认为“大概知道用户想做什么，但不是特别有把握”
+    private static final double AGENT_CLARIFICATION_CONFIDENCE_THRESHOLD = 0.50D;
+
     @Autowired
     private StudyPlanExtractAgent studyPlanExtractAgent;
+
+    @Autowired(required = false)
+    private StudyPlanIntentAgent studyPlanIntentAgent;
 
     @Autowired
     private StudyPlanService studyPlanService;
@@ -34,12 +44,32 @@ public class FeishuPlanIntentService {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     public PlanProcessResult processPlanIntent(String openId, String userText) {
-        // 先做意图筛选，避免把普通聊天都送去计划创建。
-        if (!isPlanIntent(userText)) {
-            return PlanProcessResult.ignored("未命中学习计划意图");
+        // 通过关键词的方式判断用户的意图
+        PlanAction action = resolvePlanAction(userText);
+        if (action == PlanAction.UNKNOWN) {
+            // 通过ai的方式判断用户的意图
+            AgentDecision decision = resolvePlanActionByAgent(userText);
+            // 如果需要进一步的确认意图，向用户进行提问
+            if (decision != null && decision.needsClarification()) {
+                return PlanProcessResult.success(decision.clarificationQuestion());
+            }
+            if (decision != null) {
+                action = decision.action();
+            }
+        }
+        // agent判断不出意图并且不需要进行进一步的提问
+        if (action == PlanAction.UNKNOWN) {
+            // 判断用户是不是说了一个模糊的调整意图
+            if (isAmbiguousAdjustmentIntent(userText)) {
+                return PlanProcessResult.success(buildClarificationQuestion(userText, null));
+            }
+            return PlanProcessResult.ignored("未识别到创建/查询/修改/删除学习计划意图");
         }
 
-        PlanAction action = resolvePlanAction(userText);
+        return handlePlanAction(action, openId, userText);
+    }
+
+    private PlanProcessResult handlePlanAction(PlanAction action, String openId, String userText) {
         if (action == PlanAction.QUERY) {
             return handleQuery(openId, userText);
         }
@@ -52,11 +82,9 @@ public class FeishuPlanIntentService {
             return handleUpdate(openId, userText);
         }
 
-        if (action != PlanAction.CREATE) {
-            return PlanProcessResult.ignored("未识别到创建/查询/修改/删除学习计划意图");
-        }
-
-        return handleCreate(openId, userText);
+        return action == PlanAction.CREATE
+                ? handleCreate(openId, userText)
+                : PlanProcessResult.ignored("未识别到学习计划操作");
     }
 
     private PlanProcessResult handleCreate(String openId, String userText) {
@@ -95,16 +123,20 @@ public class FeishuPlanIntentService {
             return PlanAction.UNKNOWN;
         }
 
-        if (isDeleteIntent(text)) {
+        // 判断是否有学习计划的标记（确定当前的意图是跟学习计划有关）
+        boolean hasPlanSignal = isPlanIntent(text);
+
+        if (isDeleteIntent(text) && hasPlanSignal) {
             return PlanAction.DELETE;
         }
 
-        if (isUpdateIntent(text)) {
+        if (isUpdateIntent(text) && hasPlanSignal) {
             return PlanAction.UPDATE;
         }
 
         // 显式“创建”语义优先，避免“今天15:00创建计划”被错误归类成查询。
-        if (hasExplicitCreateVerb(text)) {
+        // 通过正则表达式判断用户输入的文本中，是否包含时间词汇跟学习相关的词汇（用户是不是想要安排一个关于“学习”的计划或者日程）
+        if (hasExplicitCreateVerb(text) && (hasPlanSignal || hasScheduleLearningHint(text))) {
             return PlanAction.CREATE;
         }
 
@@ -117,6 +149,94 @@ public class FeishuPlanIntentService {
         }
 
         return PlanAction.UNKNOWN;
+    }
+
+    private AgentDecision resolvePlanActionByAgent(String userText) {
+        // 判断意图是否需要通过agent进行判断
+        if (!shouldTryAgentFallback(userText)) {
+            return null;
+        }
+        // 通过agent分析用户的意图
+        StudyPlanIntentAnalysisResult analysis = tryAnalyzeIntentByAi(userText);
+        if (analysis == null) {
+            return null;
+        }
+        // 根据agent返回的意图进行映射
+        PlanAction action = mapIntentToAction(analysis.getIntent());
+        if (action == PlanAction.UNKNOWN) {
+            return null;
+        }
+        // 判断agent返回的意图的可信度
+        double confidence = normalizeConfidence(analysis.getConfidence());
+        // 判断是否需要进行进一步的提问
+        boolean needsClarification = Boolean.TRUE.equals(analysis.getNeedsClarification());
+        // 如果可信度较高并且不需要进行进一步的提问，直接进行路由，执行相应的操作
+        if (confidence >= AGENT_ROUTE_CONFIDENCE_THRESHOLD && !needsClarification) {
+            return AgentDecision.route(action);
+        }
+        // 如果可信度不是很高 或者 agent判断需要进一步的提问
+        if (confidence >= AGENT_CLARIFICATION_CONFIDENCE_THRESHOLD || needsClarification) {
+            return AgentDecision.clarify(buildClarificationQuestion(userText, analysis));
+        }
+
+        return null;
+    }
+
+    /**
+     * 这是一个意图筛选器，
+     * @param text 用户输入的文本
+     * @return
+     */
+    private boolean shouldTryAgentFallback(String text) {
+        // 如果是空文本，不需要交给agent进行处理，直接返回空
+        if (!StringUtils.hasText(text)) {
+            return false;
+        }
+        return isPlanIntent(text) // 判断是否跟学习计划有关
+                || hasScheduleLearningHint(text) // 判断文本是否同时包含时间跟学习相关的提示词
+                || hasExplicitCreateVerb(text) // 判断用户的额关键词是否包含创建一类的动词
+                || text.contains("查询")
+                || text.contains("修改")
+                || text.contains("删除");
+    }
+
+    private PlanAction mapIntentToAction(String intent) {
+        if (!StringUtils.hasText(intent)) {
+            return PlanAction.UNKNOWN;
+        }
+        String normalized = intent.trim().toUpperCase(Locale.ROOT);
+        return switch (normalized) {
+            case "CREATE", "CREATE_PLAN" -> PlanAction.CREATE;
+            case "QUERY", "QUERY_PLAN" -> PlanAction.QUERY;
+            case "UPDATE", "UPDATE_PLAN" -> PlanAction.UPDATE;
+            case "DELETE", "DELETE_PLAN" -> PlanAction.DELETE;
+            default -> PlanAction.UNKNOWN;
+        };
+    }
+
+    private double normalizeConfidence(Double confidence) {
+        if (confidence == null) {
+            return 0.0D;
+        }
+        return Math.max(0.0D, Math.min(1.0D, confidence));
+    }
+
+    /**
+     * 构建返回信息的内容
+     * @param userText
+     * @param analysis
+     * @return
+     */
+    private String buildClarificationQuestion(String userText, StudyPlanIntentAnalysisResult analysis) {
+        if (analysis != null && StringUtils.hasText(analysis.getClarificationQuestion())) {
+            return analysis.getClarificationQuestion().trim();
+        }
+
+        String normalized = StringUtils.hasText(userText) ? userText.trim() : "你的消息";
+        if (normalized.length() > 40) {
+            normalized = normalized.substring(0, 40) + "...";
+        }
+        return "我理解你可能在处理学习计划（" + normalized + "）。请确认你是要：新增（创建）计划、查询计划、修改计划，还是删除计划？";
     }
 
     private PlanProcessResult handleQuery(String openId, String userText) {
@@ -179,6 +299,9 @@ public class FeishuPlanIntentService {
 
         UpdateCommand command = parseUpdateCommand(userText);
         if (command == null || command.targetDate() == null) {
+            if (isAmbiguousAdjustmentIntent(userText)) {
+                return PlanProcessResult.success(buildClarificationQuestion(userText, null));
+            }
             return PlanProcessResult.failed("修改计划请至少说明日期，例如：把 2025-01-01 的提醒改到 20:30");
         }
 
@@ -253,18 +376,14 @@ public class FeishuPlanIntentService {
             return false;
         }
         String normalized = text.toLowerCase(Locale.ROOT);
-        return normalized.contains("学习计划")
-                || normalized.contains("接下来一周")
-                || normalized.contains("提醒")
-                || normalized.contains("每日")
-                || normalized.contains("rag")
-                || normalized.contains("删除")
-                || normalized.contains("取消")
-                || normalized.contains("修改")
-                || normalized.contains("改成")
-                || normalized.contains("查询")
-                || normalized.contains("看看")
-                || normalized.contains("计划");
+        boolean hasStrongDomainWord = normalized.contains("学习计划")
+            || normalized.contains("学习提醒")
+            || normalized.contains("学习任务")
+            || normalized.contains("复习计划")
+            || normalized.contains("rag");
+        boolean hasPlanAndStudyWord = normalized.contains("计划")
+            && (normalized.contains("学习") || normalized.contains("复习") || normalized.contains("提醒"));
+        return hasStrongDomainWord || hasPlanAndStudyWord;
     }
 
     private boolean isDeleteIntent(String text) {
@@ -281,12 +400,32 @@ public class FeishuPlanIntentService {
         return text.contains("修改") || text.contains("改成") || text.contains("改为") || text.contains("调整") || text.contains("推迟") || text.contains("提前");
     }
 
+    /**
+     * 判断用户是否表达了一个模糊的调整意图
+     * @param text
+     * @return
+     */
+    private boolean isAmbiguousAdjustmentIntent(String text) {
+        if (!StringUtils.hasText(text)) {
+            return false;
+        }
+        boolean hasAdjustmentWord = text.contains("调整") || text.contains("改一改") || text.contains("改改");
+        boolean hasExplicitUpdateTarget = text.contains("改到")
+                || text.contains("改成")
+                || text.contains("改为")
+                || text.contains("调整到")
+                || text.contains("推迟")
+                || text.contains("提前")
+                || Pattern.compile("(?:主题|学习主题|内容|备注|说明)\\s*(?:改到|改成|改为)").matcher(text).find();
+        return hasAdjustmentWord && !hasExplicitUpdateTarget && isPlanIntent(text);
+    }
+
     private boolean isCreateIntent(String text) {
         if (!StringUtils.hasText(text)) {
             return false;
         }
 
-        if (hasExplicitCreateVerb(text)) {
+        if (hasExplicitCreateVerb(text) && (isPlanIntent(text) || hasScheduleLearningHint(text))) {
             return true;
         }
 
@@ -294,7 +433,7 @@ public class FeishuPlanIntentService {
         boolean hasScheduleHint = Pattern.compile("(\\d{4}-\\d{1,2}-\\d{1,2})|(\\d{1,2}[:：]\\d{2})|(每天|每日|明天|后天|今晚|明晚|下周)")
                 .matcher(text)
                 .find();
-        boolean hasPlanDomainWord = text.contains("学习计划") || text.contains("提醒") || text.toLowerCase(Locale.ROOT).contains("rag");
+        boolean hasPlanDomainWord = isPlanIntent(text);
         return hasScheduleHint && hasPlanDomainWord;
     }
 
@@ -303,9 +442,10 @@ public class FeishuPlanIntentService {
             return false;
         }
 
+        boolean hasPlanNoun = text.contains("学习计划") || text.contains("计划") || text.contains("提醒");
+
         boolean hasExplicitQueryVerb = text.contains("查询")
                 || text.contains("查看")
-                || text.contains("看看")
                 || text.contains("有哪些")
                 || text.contains("我的计划")
                 || text.contains("接下来几天")
@@ -314,11 +454,10 @@ public class FeishuPlanIntentService {
                 || text.contains("计划是什么")
                 || text.contains("都有什么计划");
 
-        if (hasExplicitQueryVerb) {
+        if (hasExplicitQueryVerb && hasPlanNoun) {
             return true;
         }
 
-        boolean hasPlanNoun = text.contains("学习计划") || text.contains("计划");
         boolean hasDateScopeHint = text.contains("今天")
                 || text.contains("明天")
                 || text.contains("后天")
@@ -341,6 +480,20 @@ public class FeishuPlanIntentService {
                 && !isUpdateIntent(text);
     }
 
+    private boolean hasScheduleLearningHint(String text) {
+        if (!StringUtils.hasText(text)) {
+            return false;
+        }
+
+        boolean hasTimeHint = Pattern.compile("(\\d{4}-\\d{1,2}-\\d{1,2})|(\\d{1,2}[:：]\\d{2})|(今天|明天|后天|今晚|明晚|下周|每天|每日)")
+                .matcher(text)
+                .find();
+        boolean hasLearningWord = Pattern.compile("(学习|学学|复习|刷题|预习|了解|掌握)")
+                .matcher(text)
+                .find();
+        return hasTimeHint && hasLearningWord;
+    }
+
     private boolean hasExplicitCreateVerb(String text) {
         if (!StringUtils.hasText(text)) {
             return false;
@@ -348,7 +501,6 @@ public class FeishuPlanIntentService {
 
         boolean hasCreateVerb = text.contains("创建")
                 || text.contains("制定")
-                || text.contains("安排")
                 || text.contains("新增")
                 || text.contains("生成")
                 || text.contains("做个")
@@ -522,6 +674,20 @@ public class FeishuPlanIntentService {
             return objectMapper.readValue(raw, StudyPlanExtractResult.class);
         } catch (Exception e) {
             // LLM 抽取失败不抛错，后续走规则兜底。
+            return null;
+        }
+    }
+
+    private StudyPlanIntentAnalysisResult tryAnalyzeIntentByAi(String userText) {
+        if (studyPlanIntentAgent == null || !StringUtils.hasText(userText)) {
+            return null;
+        }
+        try {
+            // 借助提示词，分析用户的意图
+            String raw = studyPlanIntentAgent.analyze(userText);
+            return objectMapper.readValue(raw, StudyPlanIntentAnalysisResult.class);
+        } catch (Exception e) {
+            // 意图分析失败不抛错，继续走规则兜底。
             return null;
         }
     }
@@ -732,6 +898,17 @@ public class FeishuPlanIntentService {
     }
 
     private record QueryCommand(LocalDate from, LocalDate to, String label) {
+    }
+
+    private record AgentDecision(PlanAction action, boolean needsClarification, String clarificationQuestion) {
+
+        private static AgentDecision route(PlanAction action) {
+            return new AgentDecision(action, false, "");
+        }
+
+        private static AgentDecision clarify(String clarificationQuestion) {
+            return new AgentDecision(PlanAction.UNKNOWN, true, clarificationQuestion);
+        }
     }
 
     private enum PlanAction {

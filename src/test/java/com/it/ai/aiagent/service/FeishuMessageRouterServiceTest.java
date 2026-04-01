@@ -102,6 +102,22 @@ class FeishuMessageRouterServiceTest {
     }
 
     @Test
+    void planClarificationShouldNotFallbackToQa() {
+        when(feishuPlanIntentService.processPlanIntent("ou_test_user", "帮我弄一下今天的学习安排"))
+                .thenReturn(FeishuPlanIntentService.PlanProcessResult.success("请确认你是要创建、查询、修改还是删除学习计划"));
+
+        FeishuMessageRouterService.RouteProcessResult result =
+                routerService.process("ou_test_user", "帮我弄一下今天的学习安排");
+
+        assertTrue(result.handled());
+        assertTrue(result.success());
+        assertEquals("plan", result.route());
+        assertTrue(result.message().contains("请确认"));
+        verify(feishuPlanIntentService).processPlanIntent("ou_test_user", "帮我弄一下今天的学习安排");
+        verify(feishuQaService, never()).processQa(anyString(), anyString());
+    }
+
+    @Test
     void planIgnoredShouldFallbackToQa() {
         when(feishuPlanIntentService.processPlanIntent("ou_test_user", "TCP三次握手是啥"))
                 .thenReturn(FeishuPlanIntentService.PlanProcessResult.ignored("未命中学习计划意图"));
