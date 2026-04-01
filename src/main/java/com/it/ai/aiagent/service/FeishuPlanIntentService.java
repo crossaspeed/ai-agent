@@ -39,22 +39,27 @@ public class FeishuPlanIntentService {
             return PlanProcessResult.ignored("未命中学习计划意图");
         }
 
-        if (isQueryIntent(userText)) {
+        PlanAction action = resolvePlanAction(userText);
+        if (action == PlanAction.QUERY) {
             return handleQuery(openId, userText);
         }
 
-        if (isDeleteIntent(userText)) {
+        if (action == PlanAction.DELETE) {
             return handleDelete(openId, userText);
         }
 
-        if (isUpdateIntent(userText)) {
+        if (action == PlanAction.UPDATE) {
             return handleUpdate(openId, userText);
         }
 
-        // 仅当命中明确“创建”语义时才会落到创建流程，避免查询语句被误创建。
-        if (!isCreateIntent(userText)) {
+        if (action != PlanAction.CREATE) {
             return PlanProcessResult.ignored("未识别到创建/查询/修改/删除学习计划意图");
         }
+
+        return handleCreate(openId, userText);
+    }
+
+    private PlanProcessResult handleCreate(String openId, String userText) {
 
         // 1) 优先尝试 LLM 抽取结构化计划。
         StudyPlanExtractResult extracted = tryExtractByAi(userText);
@@ -83,6 +88,35 @@ public class FeishuPlanIntentService {
         String firstTime = normalizedDays.get(0).getReminderTime();
         String reply = buildSuccessReply(count, firstDate, firstTime, normalizedDays);
         return PlanProcessResult.success(reply);
+    }
+
+    private PlanAction resolvePlanAction(String text) {
+        if (!StringUtils.hasText(text)) {
+            return PlanAction.UNKNOWN;
+        }
+
+        if (isDeleteIntent(text)) {
+            return PlanAction.DELETE;
+        }
+
+        if (isUpdateIntent(text)) {
+            return PlanAction.UPDATE;
+        }
+
+        // 显式“创建”语义优先，避免“今天15:00创建计划”被错误归类成查询。
+        if (hasExplicitCreateVerb(text)) {
+            return PlanAction.CREATE;
+        }
+
+        if (isQueryIntent(text)) {
+            return PlanAction.QUERY;
+        }
+
+        if (isCreateIntent(text)) {
+            return PlanAction.CREATE;
+        }
+
+        return PlanAction.UNKNOWN;
     }
 
     private PlanProcessResult handleQuery(String openId, String userText) {
@@ -252,18 +286,7 @@ public class FeishuPlanIntentService {
             return false;
         }
 
-        boolean hasCreateVerb = text.contains("创建")
-                || text.contains("制定")
-                || text.contains("安排")
-                || text.contains("新增")
-                || text.contains("生成")
-                || text.contains("做个")
-                || text.contains("做一份")
-                || text.contains("帮我定")
-                || text.contains("帮我安排")
-                || text.contains("帮我创建");
-
-        if (hasCreateVerb) {
+        if (hasExplicitCreateVerb(text)) {
             return true;
         }
 
@@ -279,32 +302,70 @@ public class FeishuPlanIntentService {
         if (!StringUtils.hasText(text)) {
             return false;
         }
-        boolean containsQueryWord = text.contains("查询")
+
+        boolean hasExplicitQueryVerb = text.contains("查询")
                 || text.contains("查看")
                 || text.contains("看看")
                 || text.contains("有哪些")
                 || text.contains("我的计划")
-                || text.contains("今天")
-                || text.contains("明天")
-                || text.contains("后天")
                 || text.contains("接下来几天")
                 || text.contains("制定了什么")
                 || text.contains("什么学习计划")
                 || text.contains("计划是什么")
                 || text.contains("都有什么计划");
 
-        if (containsQueryWord) {
+        if (hasExplicitQueryVerb) {
             return true;
         }
 
         boolean hasPlanNoun = text.contains("学习计划") || text.contains("计划");
+        boolean hasDateScopeHint = text.contains("今天")
+                || text.contains("明天")
+                || text.contains("后天")
+                || text.contains("接下来几天")
+                || text.contains("一周")
+                || text.contains("7天");
         boolean hasQuestionTone = text.contains("什么")
                 || text.contains("哪些")
                 || text.contains("多少")
                 || text.contains("吗")
                 || text.contains("?")
                 || text.contains("？");
-        return hasPlanNoun && hasQuestionTone;
+
+        if (hasPlanNoun && hasQuestionTone) {
+            return true;
+        }
+
+        return hasPlanNoun && hasDateScopeHint && !hasExplicitCreateVerb(text)
+                && !isDeleteIntent(text)
+                && !isUpdateIntent(text);
+    }
+
+    private boolean hasExplicitCreateVerb(String text) {
+        if (!StringUtils.hasText(text)) {
+            return false;
+        }
+
+        boolean hasCreateVerb = text.contains("创建")
+                || text.contains("制定")
+                || text.contains("安排")
+                || text.contains("新增")
+                || text.contains("生成")
+                || text.contains("做个")
+                || text.contains("做一份")
+                || text.contains("帮我定")
+                || text.contains("帮我安排")
+                || text.contains("帮我创建");
+
+        if (!hasCreateVerb) {
+            return false;
+        }
+
+        // 避免把“我制定了什么计划”这类回顾式问句识别成创建。
+        boolean asksWhatWasCreated = Pattern.compile("(?:创建|制定|安排|新增|生成).{0,4}(?:了)?什么")
+                .matcher(text)
+                .find();
+        return !asksWhatWasCreated;
     }
 
     private QueryCommand parseQueryCommand(String text) {
@@ -671,5 +732,13 @@ public class FeishuPlanIntentService {
     }
 
     private record QueryCommand(LocalDate from, LocalDate to, String label) {
+    }
+
+    private enum PlanAction {
+        CREATE,
+        QUERY,
+        UPDATE,
+        DELETE,
+        UNKNOWN
     }
 }

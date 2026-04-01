@@ -9,6 +9,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -63,4 +64,48 @@ class FeishuPlanIntentServiceTest {
         verify(studyPlanService, never()).createWeeklyPlan(any());
         verifyNoInteractions(studyPlanExtractAgent);
     }
+
+        @Test
+        void createPlanWithTodayTimeShouldPreferCreateIntent() {
+                when(studyPlanExtractAgent.extract(anyString())).thenReturn("""
+                                {
+                                    "planName": "飞书学习计划",
+                                    "timezone": "Asia/Shanghai",
+                                    "days": [
+                                        {
+                                            "date": "2026-04-01",
+                                            "reminderTime": "15:00",
+                                            "ragTopic": "计算机网络",
+                                            "studyContent": "了解TCP三次握手"
+                                        }
+                                    ]
+                                }
+                                """);
+                when(studyPlanService.createWeeklyPlan(any())).thenReturn(Map.of("created", 1));
+
+                FeishuPlanIntentService.PlanProcessResult result = feishuPlanIntentService.processPlanIntent(
+                                "ou_test_user",
+                                "创建学习计划：今天15：00学学计算机网络的知识，了解TCP的三次握手"
+                );
+
+                assertTrue(result.handled());
+                assertTrue(result.success());
+                assertTrue(result.message().contains("学习计划已创建成功"));
+                verify(studyPlanService).createWeeklyPlan(any());
+                verify(studyPlanService, never()).getTasksByOpenIdInRange(anyString(), any(), any());
+        }
+
+        @Test
+        void queryTodayPlanShouldNotBeMistakenAsCreateIntent() {
+                when(studyPlanService.getTasksByOpenIdInRange(anyString(), any(), any())).thenReturn(List.of());
+
+                FeishuPlanIntentService.PlanProcessResult result =
+                                feishuPlanIntentService.processPlanIntent("ou_test_user", "我今天有什么学习计划");
+
+                assertTrue(result.handled());
+                assertTrue(result.success());
+                assertTrue(result.message().contains("今天没有学习计划"));
+                verify(studyPlanService, never()).createWeeklyPlan(any());
+                verifyNoInteractions(studyPlanExtractAgent);
+        }
 }
