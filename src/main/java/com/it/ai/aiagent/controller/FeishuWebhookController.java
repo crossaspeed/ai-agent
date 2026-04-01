@@ -3,7 +3,7 @@ package com.it.ai.aiagent.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.it.ai.aiagent.service.FeishuPlanIntentService;
+import com.it.ai.aiagent.service.FeishuMessageRouterService;
 import com.it.ai.aiagent.service.ReminderNotificationService;
 import com.it.ai.aiagent.store.FeishuEventLogStore;
 import io.swagger.v3.oas.annotations.Operation;
@@ -29,7 +29,7 @@ public class FeishuWebhookController {
     private FeishuEventLogStore feishuEventLogStore;
 
     @Autowired
-    private FeishuPlanIntentService feishuPlanIntentService;
+    private FeishuMessageRouterService feishuMessageRouterService;
 
     @Autowired
     private ReminderNotificationService reminderNotificationService;
@@ -91,9 +91,9 @@ public class FeishuWebhookController {
         }
 
         try {
-            // 4) 提取文本 -> 意图识别 -> 学习计划入库 -> 回执消息。
+            // 4) 提取文本 -> 统一路由（学习计划CRUD / 知识问答）-> 回执消息。
             String userText = extractTextFromContent(content);
-            FeishuPlanIntentService.PlanProcessResult result = feishuPlanIntentService.processPlanIntent(openId, userText);
+            FeishuMessageRouterService.RouteProcessResult result = feishuMessageRouterService.process(openId, userText);
             if (!result.handled()) {
                 feishuEventLogStore.markStatus(eventId, 2, result.message());
                 return Map.of("code", 0, "msg", "ignored");
@@ -105,7 +105,7 @@ public class FeishuWebhookController {
                 return Map.of("code", 0, "msg", "ok");
             }
 
-            reminderNotificationService.sendFeishuText(openId, "学习计划处理失败：" + result.message());
+            reminderNotificationService.sendFeishuText(openId, "消息处理失败：" + result.message());
             feishuEventLogStore.markStatus(eventId, 3, result.message());
             return Map.of("code", 0, "msg", "failed");
         } catch (Exception e) {

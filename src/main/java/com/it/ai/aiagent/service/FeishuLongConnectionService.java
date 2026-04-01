@@ -45,7 +45,7 @@ public class FeishuLongConnectionService {
     private String feishuBotOpenId;
 
     @Autowired
-    private FeishuPlanIntentService feishuPlanIntentService;
+    private FeishuMessageRouterService feishuMessageRouterService;
 
     @Autowired
     private ReminderNotificationService reminderNotificationService;
@@ -149,9 +149,9 @@ public class FeishuLongConnectionService {
         }
 
         try {
-            // 5) 清洗文本（移除 @ 提及占位符），再进入意图识别与计划创建。
+            // 5) 清洗文本（移除 @ 提及占位符），再进入统一路由处理。
             String userText = normalizeUserText(content, message);
-            FeishuPlanIntentService.PlanProcessResult result = feishuPlanIntentService.processPlanIntent(openId, userText);
+            FeishuMessageRouterService.RouteProcessResult result = feishuMessageRouterService.process(openId, userText);
             if (!result.handled()) {
                 feishuEventLogStore.markStatus(eventId, 2, result.message());
                 return;
@@ -162,7 +162,7 @@ public class FeishuLongConnectionService {
                 sendReply(chatType, openId, chatId, result.message());
                 feishuEventLogStore.markStatus(eventId, 1, null);
             } else {
-                sendReply(chatType, openId, chatId, "学习计划处理失败：" + result.message());
+                sendReply(chatType, openId, chatId, "消息处理失败：" + result.message());
                 feishuEventLogStore.markStatus(eventId, 3, result.message());
             }
         } catch (Exception e) {
