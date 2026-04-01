@@ -2,19 +2,40 @@
 
 import { Message } from "./ChatArea";
 import { cn } from "@/lib/utils";
+import { useMemo } from "react";
+import { computeShrinkBubbleWidth, isComplexMarkdown } from "@/lib/textMeasure";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { oneLight } from "react-syntax-highlighter/dist/esm/styles/prism";
 
-export function MessageBubble({ message }: { message: Message }) {
+export function MessageBubble({
+  message,
+  maxBubbleWidthPx,
+}: {
+  message: Message;
+  maxBubbleWidthPx?: number;
+}) {
   const isUser = message.role === "user";
+  const shouldUseShrinkWrap = useMemo(() => !isComplexMarkdown(message.content), [message.content]);
+  const shrinkWidth = useMemo(() => {
+    if (!maxBubbleWidthPx || !shouldUseShrinkWrap) {
+      return undefined;
+    }
+    return computeShrinkBubbleWidth(message.content, maxBubbleWidthPx);
+  }, [maxBubbleWidthPx, message.content, shouldUseShrinkWrap]);
 
   return (
     <div className={cn("flex w-full mb-6", isUser ? "justify-end" : "justify-start")}>
       <div
+        style={
+          shrinkWidth
+            ? { width: `${shrinkWidth}px`, maxWidth: `${maxBubbleWidthPx}px` }
+            : undefined
+        }
         className={cn(
-          "max-w-[85%] md:max-w-[75%] rounded-2xl px-5 py-3.5 text-[15px] leading-relaxed",
+          "rounded-2xl px-5 py-3.5 text-[var(--chat-font-size)] leading-[var(--chat-line-height)]",
+          shrinkWidth ? "max-w-none" : "max-w-[85%] md:max-w-[75%]",
           isUser 
             ? "bg-slate-800 text-white" 
             : "bg-white border border-slate-100 shadow-sm text-slate-800"

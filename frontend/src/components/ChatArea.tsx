@@ -1,10 +1,12 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ChatInput } from "./ChatInput";
 import { MessageBubble } from "./MessageBubble";
 import { DataCards } from "./DataCards";
 import { motion } from "framer-motion";
+import { useVirtualizer } from "@tanstack/react-virtual";
+import { estimateMessageRowHeight } from "@/lib/textMeasure";
 
 export interface Message {
   id: string;
@@ -27,16 +29,127 @@ export function ChatArea({
 }) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isMdViewport, setIsMdViewport] = useState(false);
+  const [listWidth, setListWidth] = useState(0);
   const messageListRef = useRef<HTMLDivElement>(null);
+  const isNearBottomRef = useRef(true);
+  const scrollFrameRef = useRef<number | null>(null);
+  const sizeCacheRef = useRef<Map<string, number>>(new Map());
+
+  const maxBubbleWidthPx = useMemo(() => {
+    const containerWidth = listWidth || 720;
+    const ratio = isMdViewport ? 0.75 : 0.85;
+    return Math.max(220, Math.floor(containerWidth * ratio));
+  }, [isMdViewport, listWidth]);
+
+  const scrollToBottom = useCallback((behavior: ScrollBehavior = "auto") => {
+    const el = messageListRef.current;
+    if (!el) return;
+    el.scrollTo({ top: el.scrollHeight, behavior });
+  }, []);
+
+  const scheduleStickToBottom = useCallback(() => {
+    if (!isNearBottomRef.current) return;
+    if (scrollFrameRef.current !== null) {
+      cancelAnimationFrame(scrollFrameRef.current);
+    }
+    scrollFrameRef.current = requestAnimationFrame(() => {
+      scrollFrameRef.current = null;
+      scrollToBottom("auto");
+    });
+  }, [scrollToBottom]);
+
+  useEffect(() => {
+    return () => {
+      if (scrollFrameRef.current !== null) {
+        cancelAnimationFrame(scrollFrameRef.current);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const mediaQuery = window.matchMedia("(min-width: 768px)");
+    const handleChange = () => setIsMdViewport(mediaQuery.matches);
+    handleChange();
+    mediaQuery.addEventListener("change", handleChange);
+    return () => mediaQuery.removeEventListener("change", handleChange);
+  }, []);
 
   useEffect(() => {
     const el = messageListRef.current;
     if (!el) return;
-    el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
-  }, [messages]);
+
+    const updateWidth = () => {
+      setListWidth(el.clientWidth);
+    };
+
+    updateWidth();
+    const observer = new ResizeObserver(updateWidth);
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const el = messageListRef.current;
+    if (!el) return;
+
+    const updateNearBottom = () => {
+      const distance = el.scrollHeight - el.scrollTop - el.clientHeight;
+      isNearBottomRef.current = distance < 120;
+    };
+
+    updateNearBottom();
+    el.addEventListener("scroll", updateNearBottom, { passive: true });
+    return () => el.removeEventListener("scroll", updateNearBottom);
+  }, []);
+
+  const estimateSize = useCallback(
+    (index: number) => {
+      const msg = messages[index];
+      if (!msg) return 120;
+
+      const widthBucket = Math.round(maxBubbleWidthPx / 8) * 8;
+      const includesCards = msg.id === "welcome" && messages.length === 1;
+      const cacheKey = `${msg.id}|${widthBucket}|${includesCards ? "cards" : "plain"}`;
+      const cached = sizeCacheRef.current.get(cacheKey);
+      if (cached !== undefined) {
+        return cached;
+      }
+
+      const estimated = estimateMessageRowHeight(msg.content, maxBubbleWidthPx, {
+        includesCards,
+      });
+      sizeCacheRef.current.set(cacheKey, estimated);
+      return estimated;
+    },
+    [maxBubbleWidthPx, messages]
+  );
+
+  const rowVirtualizer = useVirtualizer({
+    count: messages.length,
+    getScrollElement: () => messageListRef.current,
+    estimateSize,
+    overscan: 6,
+    getItemKey: (index) => messages[index]?.id ?? index,
+  });
+
+  const virtualRows = rowVirtualizer.getVirtualItems();
+
+  useEffect(() => {
+    rowVirtualizer.measure();
+    scheduleStickToBottom();
+  }, [messages, rowVirtualizer, scheduleStickToBottom]);
+
+  useEffect(() => {
+    sizeCacheRef.current.clear();
+    rowVirtualizer.measure();
+  }, [maxBubbleWidthPx, rowVirtualizer]);
 
   // 组件挂载或切换 session 时获取历史记录
   useEffect(() => {
+    sizeCacheRef.current.clear();
+    isNearBottomRef.current = true;
     setMessages([]);
     fetch(`/api/agent/history/${currentSessionId}`)
       .then((res) => {
@@ -60,14 +173,18 @@ export function ChatArea({
             },
           ]);
         }
+        requestAnimationFrame(() => {
+          scrollToBottom("auto");
+        });
       })
       .catch((err) => {
         console.error("Failed to load history:", err);
       });
-  }, [currentSessionId]);
+  }, [currentSessionId, scrollToBottom]);
 
   const handleSendMessage = async (content: string) => {
     if (isLoading || !content.trim()) return;
+    isNearBottomRef.current = true;
 
     const newUserMsg: Message = { id: Date.now().toString(), role: "user", content };
     setMessages((prev) => [...prev, newUserMsg]);
@@ -188,6 +305,8 @@ export function ChatArea({
       if (hasReceivedContent) {
         flushAiText();
       }
+
+      scheduleStickToBottom();
       
       // 当消息完整接收后，触发更新以刷新侧边栏的历史记录列表
       if (onChatUpdate) {
@@ -208,20 +327,47 @@ export function ChatArea({
 
   return (
     <div className="flex flex-col h-full w-full relative">
-      <div ref={messageListRef} className="flex-1 overflow-y-auto px-4 py-6 md:px-8 pb-32 scroll-smooth">
-        {messages.map((msg) => (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
-            key={msg.id}
-          >
-            <MessageBubble message={msg} />
-            {msg.id === "welcome" && messages.length === 1 && (
-              <DataCards onSelect={(topic) => handleSendMessage(`我想测验主题：${topic}`)} />
-            )}
-          </motion.div>
-        ))}
+      <div ref={messageListRef} className="flex-1 overflow-y-auto px-4 py-6 md:px-8 pb-32">
+        <div
+          style={{
+            height: `${rowVirtualizer.getTotalSize()}px`,
+            position: "relative",
+            width: "100%",
+          }}
+        >
+          {virtualRows.map((virtualRow) => {
+            const msg = messages[virtualRow.index];
+            if (!msg) {
+              return null;
+            }
+
+            return (
+              <div
+                key={virtualRow.key}
+                data-index={virtualRow.index}
+                ref={rowVirtualizer.measureElement}
+                style={{
+                  position: "absolute",
+                  transform: `translateY(${virtualRow.start}px)`,
+                  top: 0,
+                  left: 0,
+                  width: "100%",
+                }}
+              >
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.25 }}
+                >
+                  <MessageBubble message={msg} maxBubbleWidthPx={maxBubbleWidthPx} />
+                  {msg.id === "welcome" && messages.length === 1 && (
+                    <DataCards onSelect={(topic) => handleSendMessage(`我想测验主题：${topic}`)} />
+                  )}
+                </motion.div>
+              </div>
+            );
+          })}
+        </div>
       </div>
       
       <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[#f8f9fa] via-[#f8f9fa] to-transparent pt-10 pb-6 px-4 md:px-8">
