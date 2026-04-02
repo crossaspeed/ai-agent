@@ -42,3 +42,17 @@ Optional的使用：
 Optional<Task> taskOptional = mapper.findById(id);
 ```
 
+DefaultRedisScript 的使用：
+
+作用：预加载 Lua 脚本
+
+使用方式：
+
+```yaml
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-data-redis</artifactId>
+</dependency>
+```
+
+
