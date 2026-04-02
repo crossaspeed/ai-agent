@@ -97,6 +97,21 @@ public class StudyReminderTaskStore {
         return jdbcTemplate.query(sql, taskRowMapper, openId, from, to);
     }
 
+    public List<StudyReminderTask> findByBatchId(String batchId) {
+        String sql = "SELECT * FROM study_reminder_task WHERE deleted_flag = 0 AND plan_batch_id = ? ORDER BY trigger_time ASC";
+        return jdbcTemplate.query(sql, taskRowMapper, batchId);
+    }
+
+    public List<StudyReminderTask> findByOpenIdAndDate(String openId, LocalDate date) {
+        String sql = "SELECT * FROM study_reminder_task WHERE deleted_flag = 0 AND source_open_id = ? AND study_date = ? ORDER BY trigger_time ASC";
+        return jdbcTemplate.query(sql, taskRowMapper, openId, date);
+    }
+
+    public List<StudyReminderTask> findPendingTasksByCursor(long lastIdExclusive, int limit) {
+        String sql = "SELECT * FROM study_reminder_task WHERE deleted_flag = 0 AND status = 1 AND sent_status = 0 AND id > ? ORDER BY id ASC LIMIT ?";
+        return jdbcTemplate.query(sql, taskRowMapper, lastIdExclusive, limit);
+    }
+
     public List<StudyReminderTask> findDueTasks(LocalDateTime now, int limit) {
         String sql = "SELECT * FROM study_reminder_task WHERE deleted_flag = 0 AND status = 1 AND sent_status = 0 AND trigger_time <= ? ORDER BY trigger_time ASC LIMIT ?";
         return jdbcTemplate.query(sql, taskRowMapper, now, limit);

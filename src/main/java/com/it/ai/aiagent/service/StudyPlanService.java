@@ -31,6 +31,9 @@ public class StudyPlanService {
     @Autowired
     private ReminderNotificationService reminderNotificationService;
 
+    @Autowired
+    private ReminderRedisQueueService reminderRedisQueueService;
+
     /**
      * 将前端页面填写的数据进行数据库的持久化的操作
      * @param request
@@ -101,6 +104,8 @@ public class StudyPlanService {
         }
 
         int created = studyReminderTaskStore.saveBatch(tasks);
+        List<StudyReminderTask> createdTasks = studyReminderTaskStore.findByBatchId(batchId);
+        reminderRedisQueueService.upsertTasks(createdTasks);
         return Map.of(
                 "created", created,
                 "message", "周计划已保存"
@@ -141,7 +146,18 @@ public class StudyPlanService {
         if (!StringUtils.hasText(openId) || from == null || to == null) {
             return 0;
         }
-        return studyReminderTaskStore.softDeleteByOpenIdAndRange(openId, from, to, timeFilter);
+        // 从数据库中删除从from到to时间里面的数据
+        List<StudyReminderTask> affectedTasks = studyReminderTaskStore.findTasksInRangeByOpenId(openId, from, to).stream()
+                .filter(task -> timeFilter == null || timeFilter.equals(task.getReminderTime()))
+                .toList();
+        // 将缓存里面的数据进行删除
+        int rows = studyReminderTaskStore.softDeleteByOpenIdAndRange(openId, from, to, timeFilter);
+        if (rows > 0) {
+            for (StudyReminderTask task : affectedTasks) {
+                reminderRedisQueueService.removeTask(task.getId());
+            }
+        }
+        return rows;
     }
 
     public int updateTaskByOpenId(String openId,
@@ -153,7 +169,12 @@ public class StudyPlanService {
         if (!StringUtils.hasText(openId) || targetDate == null) {
             return 0;
         }
-        return studyReminderTaskStore.updateByOpenIdAndDate(openId, targetDate, oldTime, newTime, newTopic, newStudyContent);
+        int rows = studyReminderTaskStore.updateByOpenIdAndDate(openId, targetDate, oldTime, newTime, newTopic, newStudyContent);
+        if (rows > 0) {
+            List<StudyReminderTask> tasks = studyReminderTaskStore.findByOpenIdAndDate(openId, targetDate);
+            reminderRedisQueueService.upsertTasks(tasks);
+        }
+        return rows;
     }
 
     //更新语句：启用或者停止某个任务
@@ -162,6 +183,14 @@ public class StudyPlanService {
         if (rows == 0) {
             throw new IllegalArgumentException("任务不存在");
         }
+
+        if (enabled) {
+            Optional<StudyReminderTask> task = studyReminderTaskStore.findById(id);
+            task.ifPresent(reminderRedisQueueService::upsertTask);
+        } else {
+            reminderRedisQueueService.removeTask(id);
+        }
+
         return Map.of(
                 "updated", rows,
                 "enabled", enabled
@@ -184,6 +213,29 @@ public class StudyPlanService {
     }
 
     public void executeDueTasks() {
+        // 判断这个任务有没有开启
+        if (reminderRedisQueueService.isEnabled()) {
+            // 优先尝试重试机制，让上一轮因为某种原因没有执行的任务重新放到待处理队列中
+            reminderRedisQueueService.recoverExpiredProcessingTasks();
+            // 从redis中查找近期任务
+            List<StudyReminderTask> dueTasks = reminderRedisQueueService.claimDueTasks();
+            for (StudyReminderTask task : dueTasks) {
+                try {
+                    // 查询到任务，发送消息提醒
+                    reminderNotificationService.sendReminder(task, false);
+                    // 先将消息发送完成这个状态保存到数据库中
+                    studyReminderTaskStore.markSent(task.getId(), LocalDateTime.now());
+                    // 删除缓存内容
+                    reminderRedisQueueService.removeTask(task.getId());
+                } catch (Exception e) {
+                    String message = e.getMessage() == null ? "发送失败" : e.getMessage();
+                    studyReminderTaskStore.markFailed(task.getId(), truncate(message, 900));
+                    reminderRedisQueueService.removeTask(task.getId());
+                }
+            }
+            return;
+        }
+        // 兜底机制，从数据库中查找有没有到期任务提醒
         List<StudyReminderTask> dueTasks = studyReminderTaskStore.findDueTasks(LocalDateTime.now(), 100);
         for (StudyReminderTask task : dueTasks) {
             try {
