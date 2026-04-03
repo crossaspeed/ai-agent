@@ -7,6 +7,7 @@ import dev.langchain4j.data.message.ChatMessage;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Locale;
 
 @Tag(name = "我的智能体")
 @RestController
@@ -26,6 +28,9 @@ public class XiaocController {
 
     @Autowired
     private MongoChatMemoryStore mongoChatMemoryStore;
+
+    @Autowired
+    private com.it.ai.aiagent.service.FeishuMessageRouterService feishuMessageRouterService;
 
     /**
      * 方法的作用流程：用户发送一句话->后端调用大模型->大模型每吐出一个片段就推送给前端展示
@@ -55,8 +60,42 @@ public class XiaocController {
             emitter.send(org.springframework.web.servlet.mvc.method.annotation.SseEmitter.event().comment("stream-start"));
         } catch (Exception ignored) {
         }
+
+        String normalizedMessage = normalizeText(chatForm.getMessage());
+        String explicitRouteType = normalizeRouteType(chatForm.getType());
+        String inferredRouteType = resolveRouteType(explicitRouteType, normalizedMessage);
+        boolean hasExplicitRoute = StringUtils.hasText(inferredRouteType);
+        boolean shouldTryRoute = hasExplicitRoute || isLikelyHelpQuestion(normalizedMessage);
+
+        if (shouldTryRoute) {
+            com.it.ai.aiagent.service.FeishuMessageRouterService.RouteProcessResult routeResult =
+                    feishuMessageRouterService.process("web-" + chatForm.getMemoryId(), normalizedMessage, explicitRouteType);
+
+            if (routeResult != null && routeResult.handled()) {
+                try {
+                    emitter.send(org.springframework.web.servlet.mvc.method.annotation.SseEmitter.event().data(routeResult.message()));
+                    emitter.complete();
+                    return emitter;
+                } catch (Exception e) {
+                    emitter.completeWithError(e);
+                    return emitter;
+                }
+            }
+
+            if (hasExplicitRoute) {
+                try {
+                    emitter.send(org.springframework.web.servlet.mvc.method.annotation.SseEmitter.event().data(buildRouteFallbackMessage(inferredRouteType)));
+                    emitter.complete();
+                    return emitter;
+                } catch (Exception e) {
+                    emitter.completeWithError(e);
+                    return emitter;
+                }
+            }
+        }
+
         //LangChain4j 的流式输出对象
-        dev.langchain4j.service.TokenStream tokenStream = xiaocAgent.chat(chatForm.getMemoryId(), chatForm.getMessage());
+        dev.langchain4j.service.TokenStream tokenStream = xiaocAgent.chat(chatForm.getMemoryId(), normalizedMessage);
         //每来一个token就执行这个onPartialResponse
         tokenStream.onPartialResponse(token -> {
             try {
@@ -74,6 +113,60 @@ public class XiaocController {
         .start();
         
         return emitter;
+    }
+
+    private String normalizeText(String text) {
+        if (!StringUtils.hasText(text)) {
+            return "";
+        }
+        return text.replaceAll("\\s+", " ").trim();
+    }
+
+    private String normalizeRouteType(String routeType) {
+        if (!StringUtils.hasText(routeType)) {
+            return "";
+        }
+        String normalized = routeType.trim().toLowerCase(Locale.ROOT);
+        while (normalized.startsWith("/")) {
+            normalized = normalized.substring(1).trim();
+        }
+        return normalized;
+    }
+
+    private String resolveRouteType(String explicitRouteType, String normalizedMessage) {
+        if (StringUtils.hasText(explicitRouteType)) {
+            return explicitRouteType;
+        }
+        if (!StringUtils.hasText(normalizedMessage) || !normalizedMessage.startsWith("/")) {
+            return "";
+        }
+        int splitIndex = normalizedMessage.indexOf(' ');
+        String command = splitIndex >= 0 ? normalizedMessage.substring(0, splitIndex) : normalizedMessage;
+        return normalizeRouteType(command);
+    }
+
+    private boolean isLikelyHelpQuestion(String normalizedMessage) {
+        if (!StringUtils.hasText(normalizedMessage)) {
+            return false;
+        }
+        String normalized = normalizedMessage.toLowerCase(Locale.ROOT);
+        return "帮助".equals(normalized)
+                || "菜单".equals(normalized)
+                || "功能".equals(normalized)
+                || normalized.contains("有什么功能")
+                || normalized.contains("你会什么")
+                || normalized.contains("你能做什么")
+                || normalized.contains("怎么用")
+                || normalized.contains("如何使用");
+    }
+
+    private String buildRouteFallbackMessage(String routeType) {
+        return switch (routeType) {
+            case "help" -> "可用命令：/help /plan /qa\n/help 查看能力说明\n/plan 创建或管理学习计划\n/qa 进入知识问答（例如：/qa TCP 三次握手是什么？）";
+            case "plan" -> "学习计划命令已识别，但缺少计划内容。\n请补充需求，例如：/plan 明晚20:00 学 RAG 检索";
+            case "qa" -> "知识问答命令已识别，但缺少问题内容。\n请补充问题，例如：/qa TCP/IP 模型有哪几层？";
+            default -> "未找到匹配命令，可用：/help /plan /qa";
+        };
     }
 
     @Operation(summary = "查看历史聊天")
