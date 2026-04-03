@@ -224,7 +224,10 @@ export function ChatArea({
       let aiText = "";
       let buffer = "";
       let done = false;
-      let streamMode: "unknown" | "sse" | "text" = "unknown";
+      const contentType = response.headers.get("content-type")?.toLowerCase() || "";
+      let streamMode: "unknown" | "sse" | "text" = contentType.includes("text/event-stream")
+        ? "sse"
+        : "unknown";
       let flushPending = false;
       let hasReceivedContent = false;
 
@@ -261,12 +264,59 @@ export function ChatArea({
           let updated = false;
 
           if (streamMode === "unknown") {
-            const trimmed = chunk.trimStart();
+            buffer += chunk;
+            const trimmed = buffer.trimStart();
             const looksLikeSse =
+              trimmed.startsWith(":") ||
               trimmed.startsWith("data:") ||
-              chunk.includes("\ndata:") ||
-              chunk.includes("\r\ndata:");
-            streamMode = looksLikeSse ? "sse" : "text";
+              trimmed.startsWith("event:") ||
+              trimmed.startsWith("id:") ||
+              buffer.includes("\ndata:") ||
+              buffer.includes("\r\ndata:");
+
+            // Wait for enough signal before deciding the stream mode.
+            if (looksLikeSse) {
+              streamMode = "sse";
+            } else if (buffer.length >= 2048 || done) {
+              streamMode = "text";
+              if (buffer.length > 0) {
+                hasReceivedContent = true;
+                aiText += buffer;
+                updated = true;
+              }
+              buffer = "";
+            }
+
+            if (streamMode === "unknown") {
+              if (updated) {
+                scheduleFlush();
+              }
+              continue;
+            }
+
+            if (streamMode === "sse") {
+              const lines = buffer.split(/\r?\n/);
+              buffer = lines.pop() || "";
+              for (const line of lines) {
+                if (!line || line.startsWith(":")) continue;
+                if (line.startsWith("data:")) {
+                  appendSseLine(line);
+                  updated = true;
+                }
+              }
+
+              if (updated) {
+                scheduleFlush();
+              }
+              continue;
+            }
+
+            if (streamMode === "text") {
+              if (updated) {
+                scheduleFlush();
+              }
+              continue;
+            }
           }
 
           if (streamMode === "text") {
@@ -275,7 +325,7 @@ export function ChatArea({
             }
             aiText += chunk;
             updated = true;
-          } else {
+          } else if (streamMode === "sse") {
             buffer += chunk;
             const lines = buffer.split(/\r?\n/);
             buffer = lines.pop() || "";
