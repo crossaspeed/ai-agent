@@ -57,10 +57,11 @@ export function ChatInput({ onSend }: ChatInputProps) {
   const [input, setInput] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  const slashQuery = input.trimStart().startsWith("/")
-    ? input.trimStart().slice(1).toLowerCase()
+  const normalizedInput = input.trimStart();
+  const showCommandPanel = normalizedInput.startsWith("/");
+  const slashQuery = showCommandPanel
+    ? normalizedInput.slice(1).split(/\s+/, 1)[0].toLowerCase()
     : "";
-  const showCommandPanel = input.trimStart().startsWith("/");
   const visibleCommandOptions = ROUTE_COMMAND_OPTIONS.filter((option) =>
     slashQuery.length === 0 ? true : option.command.slice(1).startsWith(slashQuery)
   );

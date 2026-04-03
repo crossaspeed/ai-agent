@@ -2,8 +2,6 @@
 
 import { Message } from "./ChatArea";
 import { cn } from "@/lib/utils";
-import { useMemo } from "react";
-import { computeShrinkBubbleWidth, isComplexMarkdown } from "@/lib/textMeasure";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
@@ -11,37 +9,33 @@ import { oneLight } from "react-syntax-highlighter/dist/esm/styles/prism";
 
 export function MessageBubble({
   message,
-  maxBubbleWidthPx,
+  maxBubbleWidthPx: _maxBubbleWidthPx,
 }: {
   message: Message;
   maxBubbleWidthPx?: number;
 }) {
   const isUser = message.role === "user";
-  const shouldUseShrinkWrap = useMemo(() => !isComplexMarkdown(message.content), [message.content]);
-  const shrinkWidth = useMemo(() => {
-    if (!maxBubbleWidthPx || !shouldUseShrinkWrap) {
-      return undefined;
-    }
-    return computeShrinkBubbleWidth(message.content, maxBubbleWidthPx);
-  }, [maxBubbleWidthPx, message.content, shouldUseShrinkWrap]);
 
   return (
-    <div className={cn("flex w-full", isUser ? "justify-end" : "justify-start")}>
+    <div className="w-full">
       <div
-        style={
-          shrinkWidth
-            ? { width: `${shrinkWidth}px`, maxWidth: `${maxBubbleWidthPx}px` }
-            : undefined
-        }
         className={cn(
-          "rounded-2xl px-5 py-3.5 text-[var(--chat-font-size)] leading-[var(--chat-line-height)]",
-          shrinkWidth ? "max-w-none" : "max-w-[85%] md:max-w-[75%]",
-          isUser 
-            ? "bg-slate-800 text-white" 
-            : "bg-white border border-slate-100 shadow-sm text-slate-800"
+          "mb-1 px-1 text-[11px] font-medium tracking-wide",
+          isUser ? "text-slate-500" : "text-slate-400"
         )}
       >
-        <div className={cn("prose max-w-none break-words", isUser ? "prose-invert" : "prose-slate")}>
+        {isUser ? "你" : "AI 助手"}
+      </div>
+
+      <div
+        className={cn(
+          "w-full text-[var(--chat-font-size)] leading-[var(--chat-line-height)]",
+          isUser
+            ? "rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3.5 text-slate-800 md:px-5"
+            : "px-1 py-1 text-slate-800"
+        )}
+      >
+        <div className={cn("prose max-w-none break-words", "prose-slate")}> 
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}
             components={{
@@ -68,7 +62,7 @@ export function MessageBubble({
                   </code>
                 );
               },
-              p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>,
+              p: ({ children }) => <p className="mb-3 last:mb-0 leading-8">{children}</p>,
             }}
           >
             {message.content}

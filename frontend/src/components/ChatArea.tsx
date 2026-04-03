@@ -43,7 +43,7 @@ export function ChatArea({
 
   const maxBubbleWidthPx = useMemo(() => {
     const containerWidth = listWidth || 720;
-    const ratio = isMdViewport ? 0.75 : 0.85;
+    const ratio = isMdViewport ? 0.92 : 0.94;
     return Math.max(220, Math.floor(containerWidth * ratio));
   }, [isMdViewport, listWidth]);
 
