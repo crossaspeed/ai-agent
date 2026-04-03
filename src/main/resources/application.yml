@@ -11,7 +11,13 @@ spring:
       mode: always
   data:
     mongodb:
-      uri: ${MONGODB_URI:mongodb://localhost:27017/chat_memory_db}
+      uri: mongodb://localhost:27017/chat_memory_db
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+      database: ${REDIS_DATABASE:1}
+      timeout: 2s
 server:
   port: 8080
 
@@ -47,6 +53,16 @@ feishu:
 scheduler:
   reminder:
     fixed-delay-ms: 60000
+
+reminder:
+  redis:
+    enabled: true
+    bootstrap-on-startup: true
+    bootstrap-batch-size: 1000
+    poll-limit: 100
+    processing-timeout-ms: 120000
+    retry-delay-ms: 15000
+    key-prefix: reminder
 
 
 
