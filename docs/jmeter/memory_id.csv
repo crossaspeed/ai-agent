@@ -1,0 +1,11 @@
+memoryId,message,type
+10001,Explain TCP three-way handshake,qa
+10002,Build a 7-day RAG study plan,plan
+10003,What is vector retrieval,qa
+10004,Show available commands,help
+10005,How to use this assistant,
+10006,Compare HTTP1.1 and HTTP2,qa
+10007,Give me a weekly network study plan,plan
+10008,What is SSE streaming,qa
+10009,Explain Redis sorted set use cases,qa
+10010,Help me start learning database indexing,plan
