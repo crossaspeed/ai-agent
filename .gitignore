@@ -36,3 +36,7 @@ build/
 .env
 .env.*
 !.env.example
+
+# JMeter generated reports and result files
+/docs/jmeter/report-*/
+/docs/jmeter/result-crud-*

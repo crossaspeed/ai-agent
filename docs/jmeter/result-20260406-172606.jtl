@@ -1,5 +1,0 @@
-timeStamp,elapsed,label,responseCode,responseMessage,threadName,dataType,success,failureMessage,bytes,sentBytes,grpThreads,allThreads,URL,Latency,IdleTime,Connect
-1775467567764,143,获取所有的历史会话列表,200,,线程组 1-1,text,true,,822,140,1,1,http://8.163.82.67/api/agent/history/sessions,142,0,44
-1775467567911,36,查看历史聊天,200,,线程组 1-1,text,true,,284,137,1,1,http://8.163.82.67/api/agent/history/10001,36,0,0
-1775467567947,28,获取已上传的主题,200,,线程组 1-1,text,true,,356,134,1,1,http://8.163.82.67/api/knowledge/topics,28,0,0
-1775467567976,0,查任务列表,Non HTTP response code: java.net.URISyntaxException,Non HTTP response message: Illegal character in query at index 52: http://8.163.82.67/api/agent/study-plan/tasks?days=${days},线程组 1-1,text,false,,1210,0,1,1,http://8.163.82.67/api/agent/study-plan/tasks?days=${days},0,0,0

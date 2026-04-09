@@ -5,7 +5,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.IndexDirection;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.time.Instant;
 
 @Data
 @AllArgsConstructor
@@ -17,9 +21,17 @@ public class ChatMessages {
     @Id
     private ObjectId id;
 
+    @Indexed
     private Long memoryId;
+
+    private String title;
     
     private String content; //存储当前聊天记录列表的json字符串
+
+    private Instant createdAt;
+
+    @Indexed(direction = IndexDirection.DESCENDING)
+    private Instant updatedAt;
 
 
 }

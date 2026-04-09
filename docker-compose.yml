@@ -8,12 +8,15 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: prod
       SERVER_PORT: 8080
+      SERVER_TOMCAT_THREADS_MAX: ${SERVER_TOMCAT_THREADS_MAX:-400}
+      SERVER_TOMCAT_THREADS_MIN_SPARE: ${SERVER_TOMCAT_THREADS_MIN_SPARE:-20}
+      SERVER_TOMCAT_ACCEPT_COUNT: ${SERVER_TOMCAT_ACCEPT_COUNT:-100}
       MYSQL_HOST: mysql
       MYSQL_PORT: 3306
       MYSQL_DB: ai_agent
       MYSQL_USER: ai_agent
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-      MONGODB_URI: mongodb://mongodb:27017/chat_memory_db
+      MONGODB_URI: ${MONGODB_URI:-mongodb://mongodb:27017/chat_memory_db?maxPoolSize=200&minPoolSize=20&maxIdleTimeMS=60000}
       REDIS_HOST: redis
       REDIS_PORT: 6379
       REDIS_PASSWORD: ${REDIS_PASSWORD:-}

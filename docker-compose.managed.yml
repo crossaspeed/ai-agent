@@ -8,12 +8,19 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: prod
       SERVER_PORT: 8080
+      SERVER_TOMCAT_THREADS_MAX: ${SERVER_TOMCAT_THREADS_MAX:-200}
+      SERVER_TOMCAT_THREADS_MIN_SPARE: ${SERVER_TOMCAT_THREADS_MIN_SPARE:-20}
+      SERVER_TOMCAT_ACCEPT_COUNT: ${SERVER_TOMCAT_ACCEPT_COUNT:-100}
       MYSQL_HOST: ${MYSQL_HOST}
       MYSQL_PORT: ${MYSQL_PORT:-3306}
       MYSQL_DB: ${MYSQL_DB}
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-      MONGODB_URI: ${MONGODB_URI}
+      MONGODB_URI: ${MONGODB_URI:-mongodb://mongodb:27017/chat_memory_db?maxPoolSize=120&minPoolSize=20&maxIdleTimeMS=60000}
+      REDIS_HOST: ${REDIS_HOST:-redis}
+      REDIS_PORT: ${REDIS_PORT:-6379}
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-}
+      REDIS_DATABASE: ${REDIS_DATABASE:-1}
       CHAT_MODEL_BASE_URL: ${CHAT_MODEL_BASE_URL:-https://api.deepseek.com}
       CHAT_MODEL_NAME: ${CHAT_MODEL_NAME:-deepseek-chat}
       DEEPSEEK_API_KEY: ${DEEPSEEK_API_KEY}
@@ -28,6 +35,16 @@ services:
       FEISHU_LONG_CONNECTION_ENABLED: ${FEISHU_LONG_CONNECTION_ENABLED:-true}
       FEISHU_LONG_CONNECTION_WORKER_THREADS: ${FEISHU_LONG_CONNECTION_WORKER_THREADS:-2}
       SCHEDULER_REMINDER_FIXED_DELAY_MS: ${SCHEDULER_REMINDER_FIXED_DELAY_MS:-60000}
+      REMINDER_REDIS_ENABLED: ${REMINDER_REDIS_ENABLED:-true}
+      REMINDER_REDIS_BOOTSTRAP_ON_STARTUP: ${REMINDER_REDIS_BOOTSTRAP_ON_STARTUP:-true}
+      REMINDER_REDIS_BOOTSTRAP_BATCH_SIZE: ${REMINDER_REDIS_BOOTSTRAP_BATCH_SIZE:-1000}
+      REMINDER_REDIS_POLL_LIMIT: ${REMINDER_REDIS_POLL_LIMIT:-100}
+      REMINDER_REDIS_PROCESSING_TIMEOUT_MS: ${REMINDER_REDIS_PROCESSING_TIMEOUT_MS:-120000}
+      REMINDER_REDIS_RETRY_DELAY_MS: ${REMINDER_REDIS_RETRY_DELAY_MS:-15000}
+      REMINDER_REDIS_KEY_PREFIX: ${REMINDER_REDIS_KEY_PREFIX:-reminder}
+    depends_on:
+      redis:
+        condition: service_healthy
     networks:
       - ai-agent-net
 
@@ -64,6 +81,23 @@ services:
     networks:
       - ai-agent-net
 
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+    networks:
+      - ai-agent-net
+
 networks:
   ai-agent-net:
     driver: bridge
+
+volumes:
+  redis_data:

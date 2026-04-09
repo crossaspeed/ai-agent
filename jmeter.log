@@ -1,161 +1,409 @@
-2026-04-06 17:26:07,146 INFO o.a.j.u.JMeterUtils: Setting Locale to en_EN
-2026-04-06 17:26:07,164 INFO o.a.j.JMeter: Loading user properties from: D:\codeSoft\apache-jmeter-5.6.3\bin\user.properties
-2026-04-06 17:26:07,164 INFO o.a.j.JMeter: Loading system properties from: D:\codeSoft\apache-jmeter-5.6.3\bin\system.properties
-2026-04-06 17:26:07,172 INFO o.a.j.JMeter: Copyright (c) 1998-2024 The Apache Software Foundation
-2026-04-06 17:26:07,172 INFO o.a.j.JMeter: Version 5.6.3
-2026-04-06 17:26:07,172 INFO o.a.j.JMeter: java.version=17.0.14
-2026-04-06 17:26:07,172 INFO o.a.j.JMeter: java.vm.name=Java HotSpot(TM) 64-Bit Server VM
-2026-04-06 17:26:07,172 INFO o.a.j.JMeter: os.name=Windows 11
-2026-04-06 17:26:07,172 INFO o.a.j.JMeter: os.arch=amd64
-2026-04-06 17:26:07,173 INFO o.a.j.JMeter: os.version=10.0
-2026-04-06 17:26:07,173 INFO o.a.j.JMeter: file.encoding=GBK
-2026-04-06 17:26:07,173 INFO o.a.j.JMeter: java.awt.headless=true
-2026-04-06 17:26:07,173 INFO o.a.j.JMeter: Max memory     =1073741824
-2026-04-06 17:26:07,173 INFO o.a.j.JMeter: Available Processors =16
-2026-04-06 17:26:07,180 INFO o.a.j.JMeter: Default Locale=English (EN)
-2026-04-06 17:26:07,180 INFO o.a.j.JMeter: JMeter  Locale=English (EN)
-2026-04-06 17:26:07,180 INFO o.a.j.JMeter: JMeterHome=D:\codeSoft\apache-jmeter-5.6.3
-2026-04-06 17:26:07,181 INFO o.a.j.JMeter: user.dir  =D:\daima\ai-agent\ai-agent
-2026-04-06 17:26:07,181 INFO o.a.j.JMeter: PWD       =D:\daima\ai-agent\ai-agent
-2026-04-06 17:26:07,183 INFO o.a.j.JMeter: IP: 10.144.29.75 Name: DESKTOP-ST30PG5 FullName: DESKTOP-ST30PG5
-2026-04-06 17:26:07,196 INFO o.a.j.JMeter: Setting property 'jmeter.reportgenerator.outputdir' to:'D:\daima\ai-agent\ai-agent\docs\jmeter\report-20260406-172606'
-2026-04-06 17:26:07,199 INFO o.a.j.s.FileServer: Default base='D:\daima\ai-agent\ai-agent'
-2026-04-06 17:26:07,201 INFO o.a.j.s.FileServer: Set new base='D:\daima\ai-agent\ai-agent\docs\jmeter'
-2026-04-06 17:26:07,360 INFO o.a.j.s.SaveService: Testplan (JMX) version: 2.2. Testlog (JTL) version: 2.2
-2026-04-06 17:26:07,382 INFO o.a.j.s.SaveService: Using SaveService properties version 5.0
-2026-04-06 17:26:07,385 INFO o.a.j.s.SaveService: Using SaveService properties file encoding UTF-8
-2026-04-06 17:26:07,389 INFO o.a.j.s.SaveService: Loading file: docs\jmeter\线程组.jmx
-2026-04-06 17:26:07,437 INFO o.a.j.p.h.s.HTTPSamplerBase: Parser for text/html is org.apache.jmeter.protocol.http.parser.LagartoBasedHtmlParser
-2026-04-06 17:26:07,437 INFO o.a.j.p.h.s.HTTPSamplerBase: Parser for application/xhtml+xml is org.apache.jmeter.protocol.http.parser.LagartoBasedHtmlParser
-2026-04-06 17:26:07,437 INFO o.a.j.p.h.s.HTTPSamplerBase: Parser for application/xml is org.apache.jmeter.protocol.http.parser.LagartoBasedHtmlParser
-2026-04-06 17:26:07,437 INFO o.a.j.p.h.s.HTTPSamplerBase: Parser for text/xml is org.apache.jmeter.protocol.http.parser.LagartoBasedHtmlParser
-2026-04-06 17:26:07,437 INFO o.a.j.p.h.s.HTTPSamplerBase: Parser for text/vnd.wap.wml is org.apache.jmeter.protocol.http.parser.RegexpHTMLParser
-2026-04-06 17:26:07,437 INFO o.a.j.p.h.s.HTTPSamplerBase: Parser for text/css is org.apache.jmeter.protocol.http.parser.CssParser
-2026-04-06 17:26:07,460 INFO o.a.j.s.SampleResult: Note: Sample TimeStamps are START times
-2026-04-06 17:26:07,461 INFO o.a.j.s.SampleResult: sampleresult.default.encoding is set to UTF-8
-2026-04-06 17:26:07,461 INFO o.a.j.s.SampleResult: sampleresult.useNanoTime=true
-2026-04-06 17:26:07,461 INFO o.a.j.s.SampleResult: sampleresult.nanoThreadSleep=5000
-2026-04-06 17:26:07,470 INFO o.a.j.JMeter: Creating summariser <summary>
-2026-04-06 17:26:07,474 INFO o.a.j.r.d.ReportGenerator: ReportGenerator will use for Parsing the separator: ','
-2026-04-06 17:26:07,475 INFO o.a.j.r.d.ReportGenerator: Will generate report at end of test from  results file: docs/jmeter/result-20260406-172606.jtl
-2026-04-06 17:26:07,475 INFO o.a.j.r.d.ReportGenerator: Reading report generator properties from: D:\codeSoft\apache-jmeter-5.6.3\bin\reportgenerator.properties
-2026-04-06 17:26:07,476 INFO o.a.j.r.d.ReportGenerator: Merging with JMeter properties
-2026-04-06 17:26:07,480 INFO o.a.j.r.c.ReportGeneratorConfiguration: Property 'jmeter.reportgenerator.temp_dir' not found, using default value 'temp' instead.
-2026-04-06 17:26:07,482 INFO o.a.j.r.c.ReportGeneratorConfiguration: Property 'jmeter.reportgenerator.apdex_per_transaction' not found, using default value 'null' instead.
-2026-04-06 17:26:07,482 INFO o.a.j.r.c.ReportGeneratorConfiguration: apdex_per_transaction is empty, not APDEX per transaction customization
-2026-04-06 17:26:07,482 INFO o.a.j.r.c.ReportGeneratorConfiguration: Property 'jmeter.reportgenerator.sample_filter' not found, using default value 'null' instead.
-2026-04-06 17:26:07,482 INFO o.a.j.r.c.ReportGeneratorConfiguration: Property 'jmeter.reportgenerator.report_title' not found, using default value 'null' instead.
-2026-04-06 17:26:07,482 INFO o.a.j.r.c.ReportGeneratorConfiguration: Property 'jmeter.reportgenerator.start_date' not found, using default value 'null' instead.
-2026-04-06 17:26:07,482 INFO o.a.j.r.c.ReportGeneratorConfiguration: Property 'jmeter.reportgenerator.end_date' not found, using default value 'null' instead.
-2026-04-06 17:26:07,482 INFO o.a.j.r.c.ReportGeneratorConfiguration: Property 'jmeter.reportgenerator.date_format' not found, using default value 'null' instead.
-2026-04-06 17:26:07,482 INFO o.a.j.r.c.ReportGeneratorConfiguration: Will use date range start date: null, end date: null
-2026-04-06 17:26:07,486 INFO o.a.j.r.c.ReportGeneratorConfiguration: Property 'jmeter.reportgenerator.graph.totalTPS.exclude_controllers' not found, using default value 'false' instead.
-2026-04-06 17:26:07,487 INFO o.a.j.r.c.ReportGeneratorConfiguration: Property 'jmeter.reportgenerator.graph.activeThreadsOverTime.exclude_controllers' not found, using default value 'false' instead.
-2026-04-06 17:26:07,487 INFO o.a.j.r.c.ReportGeneratorConfiguration: Property 'jmeter.reportgenerator.graph.timeVsThreads.exclude_controllers' not found, using default value 'false' instead.
-2026-04-06 17:26:07,487 INFO o.a.j.r.c.ReportGeneratorConfiguration: Property 'jmeter.reportgenerator.graph.responseTimeDistribution.exclude_controllers' not found, using default value 'false' instead.
-2026-04-06 17:26:07,487 INFO o.a.j.r.c.ReportGeneratorConfiguration: Property 'jmeter.reportgenerator.graph.transactionsPerSecond.exclude_controllers' not found, using default value 'false' instead.
-2026-04-06 17:26:07,487 INFO o.a.j.r.c.ReportGeneratorConfiguration: Property 'jmeter.reportgenerator.graph.responseTimePercentiles.exclude_controllers' not found, using default value 'false' instead.
-2026-04-06 17:26:07,487 INFO o.a.j.r.c.ReportGeneratorConfiguration: Property 'jmeter.reportgenerator.graph.responseTimePercentilesOverTime.exclude_controllers' not found, using default value 'false' instead.
-2026-04-06 17:26:07,487 INFO o.a.j.r.c.ReportGeneratorConfiguration: Property 'jmeter.reportgenerator.graph.responseTimesOverTime.exclude_controllers' not found, using default value 'false' instead.
-2026-04-06 17:26:07,487 INFO o.a.j.r.c.ReportGeneratorConfiguration: Property 'jmeter.reportgenerator.graph.connectTimeOverTime.exclude_controllers' not found, using default value 'false' instead.
-2026-04-06 17:26:07,488 INFO o.a.j.r.c.ReportGeneratorConfiguration: Property 'jmeter.reportgenerator.graph.latenciesOverTime.exclude_controllers' not found, using default value 'false' instead.
-2026-04-06 17:26:07,489 INFO o.a.j.r.c.ReportGeneratorConfiguration: Property 'jmeter.reportgenerator.exporter.json.filters_only_sample_series' not found, using default value 'true' instead.
-2026-04-06 17:26:07,489 INFO o.a.j.r.c.ReportGeneratorConfiguration: Property 'jmeter.reportgenerator.exporter.json.series_filter' not found, using default value '' instead.
-2026-04-06 17:26:07,489 INFO o.a.j.r.c.ReportGeneratorConfiguration: Property 'jmeter.reportgenerator.exporter.json.show_controllers_only' not found, using default value 'false' instead.
-2026-04-06 17:26:07,489 INFO o.a.j.r.c.ReportGeneratorConfiguration: Property 'jmeter.reportgenerator.exporter.html.filters_only_sample_series' not found, using default value 'true' instead.
-2026-04-06 17:26:07,489 INFO o.a.j.r.c.ReportGeneratorConfiguration: Property 'jmeter.reportgenerator.exporter.html.series_filter' not found, using default value '' instead.
-2026-04-06 17:26:07,489 INFO o.a.j.r.c.ReportGeneratorConfiguration: Property 'jmeter.reportgenerator.exporter.html.show_controllers_only' not found, using default value 'false' instead.
-2026-04-06 17:26:07,502 INFO o.a.j.e.StandardJMeterEngine: Running the test!
-2026-04-06 17:26:07,502 INFO o.a.j.s.SampleEvent: List of sample_variables: []
-2026-04-06 17:26:07,502 INFO o.a.j.s.SampleEvent: List of sample_variables: []
-2026-04-06 17:26:07,507 INFO o.a.j.e.u.CompoundVariable: Note: Function class names must contain the string: '.functions.'
-2026-04-06 17:26:07,507 INFO o.a.j.e.u.CompoundVariable: Note: Function class names must not contain the string: '.gui.'
-2026-04-06 17:26:07,583 INFO o.a.j.v.b.BackendListener: 后端监听器: Starting worker with class: class org.apache.jmeter.visualizers.backend.graphite.GraphiteBackendListenerClient and queue capacity: 5000
-2026-04-06 17:26:07,583 INFO o.a.j.v.b.BackendListener: 后端监听器: Started  worker with class: class org.apache.jmeter.visualizers.backend.graphite.GraphiteBackendListenerClient
-2026-04-06 17:26:07,598 INFO o.a.j.v.b.g.TextGraphiteMetricsSender: Created TextGraphiteMetricsSender with host: , port: 2003, prefix: jmeter.
-2026-04-06 17:26:07,607 INFO o.a.j.JMeter: Running test (1775467567607)
-2026-04-06 17:26:07,620 INFO o.a.j.e.StandardJMeterEngine: Starting ThreadGroup: 1 : 线程组
-2026-04-06 17:26:07,620 INFO o.a.j.e.StandardJMeterEngine: Starting 1 threads for group 线程组.
-2026-04-06 17:26:07,620 INFO o.a.j.e.StandardJMeterEngine: Thread will continue on error
-2026-04-06 17:26:07,620 INFO o.a.j.t.ThreadGroup: Starting thread group... number=1 threads=1 ramp-up=1 delayedStart=false
-2026-04-06 17:26:07,624 INFO o.a.j.t.ThreadGroup: Started thread group number 1
-2026-04-06 17:26:07,624 INFO o.a.j.e.StandardJMeterEngine: All thread groups have been started
-2026-04-06 17:26:07,662 INFO o.a.j.t.JMeterThread: Thread started: 线程组 1-1
-2026-04-06 17:26:07,664 INFO o.a.j.s.FileServer: Stored: D:/daima/ai-agent/ai-agent/docs/jmeter/memory_id.csv
-2026-04-06 17:26:07,691 INFO o.a.j.p.h.s.HTTPHCAbstractImpl: Local host = DESKTOP-ST30PG5
-2026-04-06 17:26:07,699 INFO o.a.j.p.h.s.HTTPHC4Impl: HTTP request retry count = 0
-2026-04-06 17:26:07,976 INFO o.a.j.t.JMeterThread: Thread is done: 线程组 1-1
-2026-04-06 17:26:07,976 INFO o.a.j.t.JMeterThread: Thread finished: 线程组 1-1
-2026-04-06 17:26:07,977 INFO o.a.j.e.StandardJMeterEngine: Notifying test listeners of end of test
-2026-04-06 17:26:07,977 INFO o.a.j.s.FileServer: Close: D:/daima/ai-agent/ai-agent/docs/jmeter/memory_id.csv
-2026-04-06 17:26:07,988 INFO o.a.j.v.b.BackendListener: Worker ended
-2026-04-06 17:26:08,015 ERROR o.a.j.v.b.g.TextGraphiteMetricsSender: Error writing to Graphite: Connection refused: no further information
-java.net.ConnectException: Connection refused: no further information
-	at java.base/sun.nio.ch.Net.pollConnect(Native Method) ~[?:?]
-	at java.base/sun.nio.ch.Net.pollConnectNow(Net.java:672) ~[?:?]
-	at java.base/sun.nio.ch.NioSocketImpl.timedFinishConnect(NioSocketImpl.java:547) ~[?:?]
-	at java.base/sun.nio.ch.NioSocketImpl.connect(NioSocketImpl.java:602) ~[?:?]
-	at java.base/java.net.SocksSocketImpl.connect(SocksSocketImpl.java:327) ~[?:?]
-	at java.base/java.net.Socket.connect(Socket.java:633) ~[?:?]
-	at org.apache.jmeter.visualizers.backend.graphite.SocketOutputStreamPoolFactory.create(SocketOutputStreamPoolFactory.java:76) ~[ApacheJMeter_components.jar:5.6.3]
-	at org.apache.jmeter.visualizers.backend.graphite.SocketOutputStreamPoolFactory.makeObject(SocketOutputStreamPoolFactory.java:47) ~[ApacheJMeter_components.jar:5.6.3]
-	at org.apache.jmeter.visualizers.backend.graphite.SocketOutputStreamPoolFactory.makeObject(SocketOutputStreamPoolFactory.java:33) ~[ApacheJMeter_components.jar:5.6.3]
-	at org.apache.commons.pool2.impl.GenericKeyedObjectPool.create(GenericKeyedObjectPool.java:796) ~[commons-pool2-2.12.0.jar:2.12.0]
-	at org.apache.commons.pool2.impl.GenericKeyedObjectPool.borrowObject(GenericKeyedObjectPool.java:444) ~[commons-pool2-2.12.0.jar:2.12.0]
-	at org.apache.commons.pool2.impl.GenericKeyedObjectPool.borrowObject(GenericKeyedObjectPool.java:355) ~[commons-pool2-2.12.0.jar:2.12.0]
-	at org.apache.jmeter.visualizers.backend.graphite.TextGraphiteMetricsSender.writeMetrics(TextGraphiteMetricsSender.java:110) [ApacheJMeter_components.jar:5.6.3]
-	at org.apache.jmeter.visualizers.backend.graphite.TextGraphiteMetricsSender.writeAndSendMetrics(TextGraphiteMetricsSender.java:104) [ApacheJMeter_components.jar:5.6.3]
-	at org.apache.jmeter.visualizers.backend.graphite.GraphiteBackendListenerClient.sendMetrics(GraphiteBackendListenerClient.java:186) [ApacheJMeter_components.jar:5.6.3]
-	at org.apache.jmeter.visualizers.backend.graphite.GraphiteBackendListenerClient.teardownTest(GraphiteBackendListenerClient.java:367) [ApacheJMeter_components.jar:5.6.3]
-	at org.apache.jmeter.visualizers.backend.BackendListener.testEnded(BackendListener.java:375) [ApacheJMeter_components.jar:5.6.3]
-	at org.apache.jmeter.visualizers.backend.BackendListener.testEnded(BackendListener.java:383) [ApacheJMeter_components.jar:5.6.3]
-	at org.apache.jmeter.engine.StandardJMeterEngine.notifyTestListenersOfEnd(StandardJMeterEngine.java:266) [ApacheJMeter_core.jar:5.6.3]
-	at org.apache.jmeter.engine.StandardJMeterEngine.run(StandardJMeterEngine.java:543) [ApacheJMeter_core.jar:5.6.3]
-	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:539) [?:?]
-	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) [?:?]
-	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136) [?:?]
-	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635) [?:?]
-	at java.base/java.lang.Thread.run(Thread.java:842) [?:?]
-2026-04-06 17:26:08,024 INFO o.a.j.r.Summariser: summary =      4 in 00:00:00 =    9.6/s Avg:    51 Min:     0 Max:   143 Err:     1 (25.00%)
-2026-04-06 17:26:08,025 INFO o.a.j.JMeter: Generating Dashboard
-2026-04-06 17:26:08,025 INFO o.a.j.r.d.ReportGenerator: Flushing result collector before report Generation
-2026-04-06 17:26:08,032 INFO o.a.j.r.p.NormalizerSampleConsumer: Using format, 'ms', to parse timeStamp field
-2026-04-06 17:26:08,175 INFO o.a.j.r.p.AbstractSampleConsumer: class org.apache.jmeter.report.processor.AggregateConsumer#stopProducing(): beginDate produced 0 samples
-2026-04-06 17:26:08,175 INFO o.a.j.r.p.AbstractSampleConsumer: class org.apache.jmeter.report.processor.AggregateConsumer#stopProducing(): endDate produced 0 samples
-2026-04-06 17:26:08,177 INFO o.a.j.r.p.AbstractSampleConsumer: class org.apache.jmeter.report.processor.ApdexSummaryConsumer#stopProducing(): apdexSummary produced 0 samples
-2026-04-06 17:26:08,177 INFO o.a.j.r.p.AbstractSampleConsumer: class org.apache.jmeter.report.processor.RequestsSummaryConsumer#stopProducing(): requestsSummary produced 0 samples
-2026-04-06 17:26:08,177 INFO o.a.j.r.p.AbstractSampleConsumer: class org.apache.jmeter.report.processor.StatisticsSummaryConsumer#stopProducing(): statisticsSummary produced 0 samples
-2026-04-06 17:26:08,179 INFO o.a.j.r.p.AbstractSampleConsumer: class org.apache.jmeter.report.processor.Top5ErrorsBySamplerConsumer#stopProducing(): top5ErrorsBySampler produced 0 samples
-2026-04-06 17:26:08,179 INFO o.a.j.r.p.AbstractSampleConsumer: class org.apache.jmeter.report.processor.ErrorsSummaryConsumer#stopProducing(): errorsSummary produced 0 samples
-2026-04-06 17:26:08,179 INFO o.a.j.r.p.AbstractSampleConsumer: class org.apache.jmeter.report.processor.graph.impl.HitsPerSecondGraphConsumer#stopProducing(): hitsPerSecond produced 0 samples
-2026-04-06 17:26:08,189 INFO o.a.j.r.p.AbstractSampleConsumer: class org.apache.jmeter.report.processor.graph.impl.LatencyVSRequestGraphConsumer#stopProducing(): latencyVsRequest produced 0 samples
-2026-04-06 17:26:08,189 INFO o.a.j.r.p.AbstractSampleConsumer: class org.apache.jmeter.report.processor.graph.impl.SyntheticResponseTimeDistributionGraphConsumer#stopProducing(): syntheticResponseTimeDistribution produced 0 samples
-2026-04-06 17:26:08,189 INFO o.a.j.r.p.AbstractSampleConsumer: class org.apache.jmeter.report.processor.graph.impl.BytesThroughputGraphConsumer#stopProducing(): bytesThroughputOverTime produced 0 samples
-2026-04-06 17:26:08,189 INFO o.a.j.r.p.AbstractSampleConsumer: class org.apache.jmeter.report.processor.graph.impl.CodesPerSecondGraphConsumer#stopProducing(): codesPerSecond produced 0 samples
-2026-04-06 17:26:08,192 INFO o.a.j.r.p.AbstractSampleConsumer: class org.apache.jmeter.report.processor.graph.impl.ResponseTimeVSRequestGraphConsumer#stopProducing(): responseTimeVsRequest produced 0 samples
-2026-04-06 17:26:08,192 INFO o.a.j.r.p.AbstractSampleConsumer: class org.apache.jmeter.report.processor.FilterConsumer#stopProducing(): startIntervalControlerFilter produced 28 samples
-2026-04-06 17:26:08,192 INFO o.a.j.r.p.AbstractSampleConsumer: class org.apache.jmeter.report.processor.graph.impl.TotalTPSGraphConsumer#stopProducing(): totalTPS produced 0 samples
-2026-04-06 17:26:08,192 INFO o.a.j.r.p.AbstractSampleConsumer: class org.apache.jmeter.report.processor.graph.impl.ActiveThreadsGraphConsumer#stopProducing(): activeThreadsOverTime produced 0 samples
-2026-04-06 17:26:08,192 INFO o.a.j.r.p.AbstractSampleConsumer: class org.apache.jmeter.report.processor.graph.impl.TimeVSThreadGraphConsumer#stopProducing(): timeVsThreads produced 0 samples
-2026-04-06 17:26:08,192 INFO o.a.j.r.p.AbstractSampleConsumer: class org.apache.jmeter.report.processor.graph.impl.ResponseTimeDistributionGraphConsumer#stopProducing(): responseTimeDistribution produced 0 samples
-2026-04-06 17:26:08,192 INFO o.a.j.r.p.AbstractSampleConsumer: class org.apache.jmeter.report.processor.graph.impl.TransactionsPerSecondGraphConsumer#stopProducing(): transactionsPerSecond produced 0 samples
-2026-04-06 17:26:08,192 INFO o.a.j.r.p.AbstractSampleConsumer: class org.apache.jmeter.report.processor.graph.impl.ResponseTimePercentilesGraphConsumer#stopProducing(): responseTimePercentiles produced 0 samples
-2026-04-06 17:26:08,193 INFO o.a.j.r.p.AbstractSampleConsumer: class org.apache.jmeter.report.processor.graph.impl.ResponseTimePercentilesOverTimeGraphConsumer#stopProducing(): responseTimePercentilesOverTime produced 0 samples
-2026-04-06 17:26:08,193 INFO o.a.j.r.p.AbstractSampleConsumer: class org.apache.jmeter.report.processor.graph.impl.ResponseTimeOverTimeGraphConsumer#stopProducing(): responseTimesOverTime produced 0 samples
-2026-04-06 17:26:08,193 INFO o.a.j.r.p.AbstractSampleConsumer: class org.apache.jmeter.report.processor.graph.impl.ConnectTimeOverTimeGraphConsumer#stopProducing(): connectTimeOverTime produced 0 samples
-2026-04-06 17:26:08,193 INFO o.a.j.r.p.AbstractSampleConsumer: class org.apache.jmeter.report.processor.graph.impl.LatencyOverTimeGraphConsumer#stopProducing(): latenciesOverTime produced 0 samples
-2026-04-06 17:26:08,193 INFO o.a.j.r.p.AbstractSampleConsumer: class org.apache.jmeter.report.processor.FilterConsumer#stopProducing(): nameFilter produced 60 samples
-2026-04-06 17:26:08,193 INFO o.a.j.r.p.AbstractSampleConsumer: class org.apache.jmeter.report.processor.FilterConsumer#stopProducing(): dateRangeFilter produced 12 samples
-2026-04-06 17:26:08,194 INFO o.a.j.r.p.AbstractSampleConsumer: class org.apache.jmeter.report.processor.NormalizerSampleConsumer#stopProducing(): normalizer produced 4 samples
-2026-04-06 17:26:08,194 INFO o.a.j.r.p.CsvFileSampleSource: produce(): 4 samples produced in 142ms on channel 0
-2026-04-06 17:26:08,194 INFO o.a.j.r.d.ReportGenerator: Exporting data using exporter:'json' of className:'org.apache.jmeter.report.dashboard.JsonExporter'
-2026-04-06 17:26:08,254 INFO o.a.j.r.d.JsonExporter: Found data for consumer statisticsSummary?in context
-2026-04-06 17:26:08,254 INFO o.a.j.r.d.JsonExporter: Creating statistics for overall
-2026-04-06 17:26:08,255 INFO o.a.j.r.d.JsonExporter: Creating statistics for other transactions
-2026-04-06 17:26:08,255 INFO o.a.j.r.d.JsonExporter: Checking output folder
-2026-04-06 17:26:08,256 INFO o.a.j.r.d.JsonExporter: Writing statistics JSON to D:\daima\ai-agent\ai-agent\docs\jmeter\report-20260406-172606\statistics.json
-2026-04-06 17:26:08,294 INFO o.a.j.r.d.ReportGenerator: Exporting data using exporter:'html' of className:'org.apache.jmeter.report.dashboard.HtmlTemplateExporter'
-2026-04-06 17:26:08,296 INFO o.a.j.r.d.HtmlTemplateExporter: Will generate dashboard in folder: D:\daima\ai-agent\ai-agent\docs\jmeter\report-20260406-172606
-2026-04-06 17:26:08,401 INFO o.a.j.r.d.HtmlTemplateExporter: Report will be generated in: D:\daima\ai-agent\ai-agent\docs\jmeter\report-20260406-172606, creating folder structure
-2026-04-06 17:26:08,404 INFO o.a.j.r.d.TemplateVisitor: Copying folder from 'D:\codeSoft\apache-jmeter-5.6.3\bin\report-template' to 'D:\daima\ai-agent\ai-agent\docs\jmeter\report-20260406-172606', got message: D:\daima\ai-agent\ai-agent\docs\jmeter\report-20260406-172606, found non empty folder with following content [D:\daima\ai-agent\ai-agent\docs\jmeter\report-20260406-172606\statistics.json], will be ignored
-2026-04-06 17:26:08,679 INFO o.a.j.JMeter: Dashboard generated
+2026-04-08 20:23:11,856 INFO o.a.j.u.JMeterUtils: Setting Locale to en_EN
+2026-04-08 20:23:11,877 INFO o.a.j.JMeter: Loading user properties from: D:\codeSoft\apache-jmeter-5.6.3\bin\user.properties
+2026-04-08 20:23:11,878 INFO o.a.j.JMeter: Loading system properties from: D:\codeSoft\apache-jmeter-5.6.3\bin\system.properties
+2026-04-08 20:23:11,883 INFO o.a.j.JMeter: Copyright (c) 1998-2024 The Apache Software Foundation
+2026-04-08 20:23:11,883 INFO o.a.j.JMeter: Version 5.6.3
+2026-04-08 20:23:11,883 INFO o.a.j.JMeter: java.version=17.0.14
+2026-04-08 20:23:11,883 INFO o.a.j.JMeter: java.vm.name=Java HotSpot(TM) 64-Bit Server VM
+2026-04-08 20:23:11,883 INFO o.a.j.JMeter: os.name=Windows 11
+2026-04-08 20:23:11,885 INFO o.a.j.JMeter: os.arch=amd64
+2026-04-08 20:23:11,885 INFO o.a.j.JMeter: os.version=10.0
+2026-04-08 20:23:11,885 INFO o.a.j.JMeter: file.encoding=GBK
+2026-04-08 20:23:11,885 INFO o.a.j.JMeter: java.awt.headless=true
+2026-04-08 20:23:11,885 INFO o.a.j.JMeter: Max memory     =1073741824
+2026-04-08 20:23:11,885 INFO o.a.j.JMeter: Available Processors =16
+2026-04-08 20:23:11,894 INFO o.a.j.JMeter: Default Locale=English (EN)
+2026-04-08 20:23:11,894 INFO o.a.j.JMeter: JMeter  Locale=English (EN)
+2026-04-08 20:23:11,895 INFO o.a.j.JMeter: JMeterHome=D:\codeSoft\apache-jmeter-5.6.3
+2026-04-08 20:23:11,895 INFO o.a.j.JMeter: user.dir  =D:\daima\ai-agent\ai-agent
+2026-04-08 20:23:11,895 INFO o.a.j.JMeter: PWD       =D:\daima\ai-agent\ai-agent
+2026-04-08 20:23:11,898 INFO o.a.j.JMeter: IP: 10.144.29.75 Name: DESKTOP-ST30PG5 FullName: host.docker.internal
+2026-04-08 20:23:11,912 INFO o.a.j.JMeter: Setting property 'jmeter.reportgenerator.outputdir' to:'D:\daima\ai-agent\ai-agent\docs\jmeter\report-crud-20260408-202310'
+2026-04-08 20:23:11,915 INFO o.a.j.s.FileServer: Default base='D:\daima\ai-agent\ai-agent'
+2026-04-08 20:23:11,917 INFO o.a.j.s.FileServer: Set new base='D:\daima\ai-agent\ai-agent\docs\jmeter'
+2026-04-08 20:23:12,105 INFO o.a.j.s.SaveService: Testplan (JMX) version: 2.2. Testlog (JTL) version: 2.2
+2026-04-08 20:23:12,134 INFO o.a.j.s.SaveService: Using SaveService properties version 5.0
+2026-04-08 20:23:12,137 INFO o.a.j.s.SaveService: Using SaveService properties file encoding UTF-8
+2026-04-08 20:23:12,140 INFO o.a.j.s.SaveService: Loading file: docs\jmeter\线程组-crud.jmx
+2026-04-08 20:23:12,206 INFO o.a.j.p.h.s.HTTPSamplerBase: Parser for text/html is org.apache.jmeter.protocol.http.parser.LagartoBasedHtmlParser
+2026-04-08 20:23:12,207 INFO o.a.j.p.h.s.HTTPSamplerBase: Parser for application/xhtml+xml is org.apache.jmeter.protocol.http.parser.LagartoBasedHtmlParser
+2026-04-08 20:23:12,207 INFO o.a.j.p.h.s.HTTPSamplerBase: Parser for application/xml is org.apache.jmeter.protocol.http.parser.LagartoBasedHtmlParser
+2026-04-08 20:23:12,207 INFO o.a.j.p.h.s.HTTPSamplerBase: Parser for text/xml is org.apache.jmeter.protocol.http.parser.LagartoBasedHtmlParser
+2026-04-08 20:23:12,207 INFO o.a.j.p.h.s.HTTPSamplerBase: Parser for text/vnd.wap.wml is org.apache.jmeter.protocol.http.parser.RegexpHTMLParser
+2026-04-08 20:23:12,207 INFO o.a.j.p.h.s.HTTPSamplerBase: Parser for text/css is org.apache.jmeter.protocol.http.parser.CssParser
+2026-04-08 20:23:12,222 INFO o.a.j.s.SampleResult: Note: Sample TimeStamps are START times
+2026-04-08 20:23:12,222 INFO o.a.j.s.SampleResult: sampleresult.default.encoding is set to UTF-8
+2026-04-08 20:23:12,223 INFO o.a.j.s.SampleResult: sampleresult.useNanoTime=true
+2026-04-08 20:23:12,223 INFO o.a.j.s.SampleResult: sampleresult.nanoThreadSleep=5000
+2026-04-08 20:23:12,235 INFO o.a.j.JMeter: Creating summariser <summary>
+2026-04-08 20:23:12,239 INFO o.a.j.r.d.ReportGenerator: ReportGenerator will use for Parsing the separator: ','
+2026-04-08 20:23:12,239 INFO o.a.j.r.d.ReportGenerator: Will generate report at end of test from  results file: docs/jmeter/result-crud-20260408-202310.jtl
+2026-04-08 20:23:12,239 INFO o.a.j.r.d.ReportGenerator: Reading report generator properties from: D:\codeSoft\apache-jmeter-5.6.3\bin\reportgenerator.properties
+2026-04-08 20:23:12,240 INFO o.a.j.r.d.ReportGenerator: Merging with JMeter properties
+2026-04-08 20:23:12,243 INFO o.a.j.r.c.ReportGeneratorConfiguration: Property 'jmeter.reportgenerator.temp_dir' not found, using default value 'temp' instead.
+2026-04-08 20:23:12,246 INFO o.a.j.r.c.ReportGeneratorConfiguration: Property 'jmeter.reportgenerator.apdex_per_transaction' not found, using default value 'null' instead.
+2026-04-08 20:23:12,246 INFO o.a.j.r.c.ReportGeneratorConfiguration: apdex_per_transaction is empty, not APDEX per transaction customization
+2026-04-08 20:23:12,246 INFO o.a.j.r.c.ReportGeneratorConfiguration: Property 'jmeter.reportgenerator.sample_filter' not found, using default value 'null' instead.
+2026-04-08 20:23:12,246 INFO o.a.j.r.c.ReportGeneratorConfiguration: Property 'jmeter.reportgenerator.report_title' not found, using default value 'null' instead.
+2026-04-08 20:23:12,246 INFO o.a.j.r.c.ReportGeneratorConfiguration: Property 'jmeter.reportgenerator.start_date' not found, using default value 'null' instead.
+2026-04-08 20:23:12,246 INFO o.a.j.r.c.ReportGeneratorConfiguration: Property 'jmeter.reportgenerator.end_date' not found, using default value 'null' instead.
+2026-04-08 20:23:12,246 INFO o.a.j.r.c.ReportGeneratorConfiguration: Property 'jmeter.reportgenerator.date_format' not found, using default value 'null' instead.
+2026-04-08 20:23:12,247 INFO o.a.j.r.c.ReportGeneratorConfiguration: Will use date range start date: null, end date: null
+2026-04-08 20:23:12,250 INFO o.a.j.r.c.ReportGeneratorConfiguration: Property 'jmeter.reportgenerator.graph.totalTPS.exclude_controllers' not found, using default value 'false' instead.
+2026-04-08 20:23:12,250 INFO o.a.j.r.c.ReportGeneratorConfiguration: Property 'jmeter.reportgenerator.graph.activeThreadsOverTime.exclude_controllers' not found, using default value 'false' instead.
+2026-04-08 20:23:12,250 INFO o.a.j.r.c.ReportGeneratorConfiguration: Property 'jmeter.reportgenerator.graph.timeVsThreads.exclude_controllers' not found, using default value 'false' instead.
+2026-04-08 20:23:12,250 INFO o.a.j.r.c.ReportGeneratorConfiguration: Property 'jmeter.reportgenerator.graph.responseTimeDistribution.exclude_controllers' not found, using default value 'false' instead.
+2026-04-08 20:23:12,250 INFO o.a.j.r.c.ReportGeneratorConfiguration: Property 'jmeter.reportgenerator.graph.transactionsPerSecond.exclude_controllers' not found, using default value 'false' instead.
+2026-04-08 20:23:12,250 INFO o.a.j.r.c.ReportGeneratorConfiguration: Property 'jmeter.reportgenerator.graph.responseTimePercentiles.exclude_controllers' not found, using default value 'false' instead.
+2026-04-08 20:23:12,251 INFO o.a.j.r.c.ReportGeneratorConfiguration: Property 'jmeter.reportgenerator.graph.responseTimePercentilesOverTime.exclude_controllers' not found, using default value 'false' instead.
+2026-04-08 20:23:12,251 INFO o.a.j.r.c.ReportGeneratorConfiguration: Property 'jmeter.reportgenerator.graph.responseTimesOverTime.exclude_controllers' not found, using default value 'false' instead.
+2026-04-08 20:23:12,251 INFO o.a.j.r.c.ReportGeneratorConfiguration: Property 'jmeter.reportgenerator.graph.connectTimeOverTime.exclude_controllers' not found, using default value 'false' instead.
+2026-04-08 20:23:12,251 INFO o.a.j.r.c.ReportGeneratorConfiguration: Property 'jmeter.reportgenerator.graph.latenciesOverTime.exclude_controllers' not found, using default value 'false' instead.
+2026-04-08 20:23:12,252 INFO o.a.j.r.c.ReportGeneratorConfiguration: Property 'jmeter.reportgenerator.exporter.json.filters_only_sample_series' not found, using default value 'true' instead.
+2026-04-08 20:23:12,252 INFO o.a.j.r.c.ReportGeneratorConfiguration: Property 'jmeter.reportgenerator.exporter.json.series_filter' not found, using default value '' instead.
+2026-04-08 20:23:12,252 INFO o.a.j.r.c.ReportGeneratorConfiguration: Property 'jmeter.reportgenerator.exporter.json.show_controllers_only' not found, using default value 'false' instead.
+2026-04-08 20:23:12,252 INFO o.a.j.r.c.ReportGeneratorConfiguration: Property 'jmeter.reportgenerator.exporter.html.filters_only_sample_series' not found, using default value 'true' instead.
+2026-04-08 20:23:12,252 INFO o.a.j.r.c.ReportGeneratorConfiguration: Property 'jmeter.reportgenerator.exporter.html.series_filter' not found, using default value '' instead.
+2026-04-08 20:23:12,252 INFO o.a.j.r.c.ReportGeneratorConfiguration: Property 'jmeter.reportgenerator.exporter.html.show_controllers_only' not found, using default value 'false' instead.
+2026-04-08 20:23:12,265 INFO o.a.j.e.StandardJMeterEngine: Running the test!
+2026-04-08 20:23:12,266 INFO o.a.j.s.SampleEvent: List of sample_variables: []
+2026-04-08 20:23:12,266 INFO o.a.j.s.SampleEvent: List of sample_variables: []
+2026-04-08 20:23:12,269 INFO o.a.j.e.u.CompoundVariable: Note: Function class names must contain the string: '.functions.'
+2026-04-08 20:23:12,269 INFO o.a.j.e.u.CompoundVariable: Note: Function class names must not contain the string: '.gui.'
+2026-04-08 20:23:12,323 INFO o.a.j.r.ClassFinder: Will scan jar D:\codeSoft\apache-jmeter-5.6.3\lib\ext\jmeter-plugins-manager-1.12.jar with filter ExtendsClassFilter [parents=[interface org.apache.jmeter.functions.Function], inner=false, contains=null, notContains=null]. Consider exposing JMeter plugins via META-INF/services, and add JMeter-Skip-Class-Scanning=true manifest attribute so JMeter can skip classfile scanning
+2026-04-08 20:23:12,399 INFO o.a.j.r.ClassFinder: Will scan jar D:\codeSoft\apache-jmeter-5.6.3\lib\ext\jmeter-plugins-casutg-3.1.1.jar with filter ExtendsClassFilter [parents=[interface org.apache.jmeter.functions.Function], inner=false, contains=null, notContains=null]. Consider exposing JMeter plugins via META-INF/services, and add JMeter-Skip-Class-Scanning=true manifest attribute so JMeter can skip classfile scanning
+2026-04-08 20:23:12,434 INFO o.a.j.v.b.BackendListener: Backend Listener: Starting worker with class: class org.apache.jmeter.visualizers.backend.influxdb.InfluxdbBackendListenerClient and queue capacity: 5000
+2026-04-08 20:23:12,435 INFO o.a.j.v.b.BackendListener: Backend Listener: Started  worker with class: class org.apache.jmeter.visualizers.backend.influxdb.InfluxdbBackendListenerClient
+2026-04-08 20:23:12,689 INFO o.a.j.JMeter: Running test (1775650992689)
+2026-04-08 20:23:12,704 INFO o.a.j.e.StandardJMeterEngine: Starting ThreadGroup: 1 : bzm - Concurrency Thread Group - CRUD
+2026-04-08 20:23:12,704 INFO o.a.j.e.StandardJMeterEngine: Starting 1000 threads for group bzm - Concurrency Thread Group - CRUD.
+2026-04-08 20:23:12,704 INFO o.a.j.e.StandardJMeterEngine: Thread will continue on error
+2026-04-08 20:23:12,706 INFO o.a.j.e.StandardJMeterEngine: All thread groups have been started
+2026-04-08 20:23:12,707 INFO c.b.j.t.c.ConcurrencyThreadStarter: Start supplying threads
+2026-04-08 20:23:12,833 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-15
+2026-04-08 20:23:12,833 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-60
+2026-04-08 20:23:12,834 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-97
+2026-04-08 20:23:12,834 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-100
+2026-04-08 20:23:12,839 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-1
+2026-04-08 20:23:12,839 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-32
+2026-04-08 20:23:12,839 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-45
+2026-04-08 20:23:12,840 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-26
+2026-04-08 20:23:12,840 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-62
+2026-04-08 20:23:12,840 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-7
+2026-04-08 20:23:12,840 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-36
+2026-04-08 20:23:12,840 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-10
+2026-04-08 20:23:12,841 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-84
+2026-04-08 20:23:12,841 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-66
+2026-04-08 20:23:12,841 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-38
+2026-04-08 20:23:12,841 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-17
+2026-04-08 20:23:12,842 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-6
+2026-04-08 20:23:12,842 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-92
+2026-04-08 20:23:12,842 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-78
+2026-04-08 20:23:12,842 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-82
+2026-04-08 20:23:12,842 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-23
+2026-04-08 20:23:12,842 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-54
+2026-04-08 20:23:12,842 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-67
+2026-04-08 20:23:12,842 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-76
+2026-04-08 20:23:12,842 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-93
+2026-04-08 20:23:12,842 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-19
+2026-04-08 20:23:12,842 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-61
+2026-04-08 20:23:12,842 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-16
+2026-04-08 20:23:12,842 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-47
+2026-04-08 20:23:12,842 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-50
+2026-04-08 20:23:12,842 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-90
+2026-04-08 20:23:12,843 INFO o.a.j.s.FileServer: Stored: D:/daima/ai-agent/ai-agent/docs/jmeter/task_id.csv
+2026-04-08 20:23:12,843 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-34
+2026-04-08 20:23:12,843 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-4
+2026-04-08 20:23:12,842 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-42
+2026-04-08 20:23:12,843 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-81
+2026-04-08 20:23:12,843 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-85
+2026-04-08 20:23:12,843 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-96
+2026-04-08 20:23:12,843 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-20
+2026-04-08 20:23:12,843 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-18
+2026-04-08 20:23:12,844 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-56
+2026-04-08 20:23:12,844 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-98
+2026-04-08 20:23:12,844 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-35
+2026-04-08 20:23:12,844 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-77
+2026-04-08 20:23:12,844 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-57
+2026-04-08 20:23:12,844 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-99
+2026-04-08 20:23:12,844 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-63
+2026-04-08 20:23:12,844 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-68
+2026-04-08 20:23:12,844 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-21
+2026-04-08 20:23:12,844 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-64
+2026-04-08 20:23:12,845 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-31
+2026-04-08 20:23:12,844 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-14
+2026-04-08 20:23:12,845 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-59
+2026-04-08 20:23:12,845 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-29
+2026-04-08 20:23:12,845 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-86
+2026-04-08 20:23:12,846 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-74
+2026-04-08 20:23:12,846 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-2
+2026-04-08 20:23:12,846 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-95
+2026-04-08 20:23:12,846 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-11
+2026-04-08 20:23:12,846 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-83
+2026-04-08 20:23:12,846 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-94
+2026-04-08 20:23:12,846 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-3
+2026-04-08 20:23:12,846 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-58
+2026-04-08 20:23:12,846 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-9
+2026-04-08 20:23:12,846 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-27
+2026-04-08 20:23:12,846 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-73
+2026-04-08 20:23:12,846 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-33
+2026-04-08 20:23:12,846 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-13
+2026-04-08 20:23:12,846 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-79
+2026-04-08 20:23:12,847 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-55
+2026-04-08 20:23:12,847 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-48
+2026-04-08 20:23:12,847 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-72
+2026-04-08 20:23:12,847 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-53
+2026-04-08 20:23:12,847 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-41
+2026-04-08 20:23:12,847 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-91
+2026-04-08 20:23:12,847 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-44
+2026-04-08 20:23:12,847 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-75
+2026-04-08 20:23:12,847 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-24
+2026-04-08 20:23:12,847 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-37
+2026-04-08 20:23:12,847 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-8
+2026-04-08 20:23:12,847 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-52
+2026-04-08 20:23:12,847 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-39
+2026-04-08 20:23:12,847 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-43
+2026-04-08 20:23:12,847 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-80
+2026-04-08 20:23:12,848 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-12
+2026-04-08 20:23:12,848 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-28
+2026-04-08 20:23:12,848 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-69
+2026-04-08 20:23:12,848 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-22
+2026-04-08 20:23:12,848 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-65
+2026-04-08 20:23:12,848 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-40
+2026-04-08 20:23:12,848 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-5
+2026-04-08 20:23:12,848 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-70
+2026-04-08 20:23:12,848 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-87
+2026-04-08 20:23:12,848 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-49
+2026-04-08 20:23:12,848 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-88
+2026-04-08 20:23:12,848 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-30
+2026-04-08 20:23:12,848 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-89
+2026-04-08 20:23:12,848 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-25
+2026-04-08 20:23:12,848 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-71
+2026-04-08 20:23:12,848 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-51
+2026-04-08 20:23:12,848 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-46
+2026-04-08 20:23:12,897 INFO o.a.j.s.FileServer: Stored: D:/daima/ai-agent/ai-agent/docs/jmeter/memory_id.csv
+2026-04-08 20:23:12,918 INFO o.a.j.p.h.s.HTTPHCAbstractImpl: Local host = DESKTOP-ST30PG5
+2026-04-08 20:23:12,923 INFO o.a.j.p.h.s.HTTPHC4Impl: HTTP request retry count = 0
+2026-04-08 20:23:14,514 INFO o.a.j.u.JsseSSLManager: Using default SSL protocol: TLS
+2026-04-08 20:23:14,514 INFO o.a.j.u.JsseSSLManager: SSL session context: per-thread
+2026-04-08 20:23:30,002 INFO o.a.j.r.Summariser: summary +   8919 in 00:00:17 =  515.2/s Avg:   189 Min:    32 Max:  1080 Err:     0 (0.00%) Active: 100 Started: 100 Finished: 0
+2026-04-08 20:24:00,000 INFO o.a.j.r.Summariser: summary +  20804 in 00:00:30 =  693.5/s Avg:   144 Min:    59 Max:   615 Err:     0 (0.00%) Active: 100 Started: 100 Finished: 0
+2026-04-08 20:24:00,001 INFO o.a.j.r.Summariser: summary =  29723 in 00:00:47 =  628.2/s Avg:   157 Min:    32 Max:  1080 Err:     0 (0.00%)
+2026-04-08 20:24:30,003 INFO o.a.j.r.Summariser: summary +  19781 in 00:00:30 =  659.3/s Avg:   151 Min:    54 Max:   575 Err:     0 (0.00%) Active: 100 Started: 100 Finished: 0
+2026-04-08 20:24:30,004 INFO o.a.j.r.Summariser: summary =  49504 in 00:01:17 =  640.3/s Avg:   155 Min:    32 Max:  1080 Err:     0 (0.00%)
+2026-04-08 20:25:00,000 INFO o.a.j.r.Summariser: summary +  19461 in 00:00:30 =  648.8/s Avg:   154 Min:    58 Max:  1198 Err:     0 (0.00%) Active: 100 Started: 100 Finished: 0
+2026-04-08 20:25:00,000 INFO o.a.j.r.Summariser: summary =  68965 in 00:01:47 =  642.7/s Avg:   154 Min:    32 Max:  1198 Err:     0 (0.00%)
+2026-04-08 20:25:12,778 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-101
+2026-04-08 20:25:12,778 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-102
+2026-04-08 20:25:12,778 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-103
+2026-04-08 20:25:12,778 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-104
+2026-04-08 20:25:12,778 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-105
+2026-04-08 20:25:12,779 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-106
+2026-04-08 20:25:12,779 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-107
+2026-04-08 20:25:12,779 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-108
+2026-04-08 20:25:12,779 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-109
+2026-04-08 20:25:12,780 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-110
+2026-04-08 20:25:12,781 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-111
+2026-04-08 20:25:12,781 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-113
+2026-04-08 20:25:12,781 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-114
+2026-04-08 20:25:12,781 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-112
+2026-04-08 20:25:12,781 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-115
+2026-04-08 20:25:12,781 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-116
+2026-04-08 20:25:12,781 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-117
+2026-04-08 20:25:12,781 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-118
+2026-04-08 20:25:12,781 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-119
+2026-04-08 20:25:12,782 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-121
+2026-04-08 20:25:12,782 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-120
+2026-04-08 20:25:12,783 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-122
+2026-04-08 20:25:12,783 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-123
+2026-04-08 20:25:12,783 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-124
+2026-04-08 20:25:12,783 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-125
+2026-04-08 20:25:12,783 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-126
+2026-04-08 20:25:12,784 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-127
+2026-04-08 20:25:12,784 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-128
+2026-04-08 20:25:12,784 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-129
+2026-04-08 20:25:12,785 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-131
+2026-04-08 20:25:12,785 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-130
+2026-04-08 20:25:12,786 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-132
+2026-04-08 20:25:12,786 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-133
+2026-04-08 20:25:12,786 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-134
+2026-04-08 20:25:12,786 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-135
+2026-04-08 20:25:12,786 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-136
+2026-04-08 20:25:12,786 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-137
+2026-04-08 20:25:12,786 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-138
+2026-04-08 20:25:12,787 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-139
+2026-04-08 20:25:12,787 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-140
+2026-04-08 20:25:12,787 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-141
+2026-04-08 20:25:12,787 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-142
+2026-04-08 20:25:12,787 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-143
+2026-04-08 20:25:12,789 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-144
+2026-04-08 20:25:12,789 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-145
+2026-04-08 20:25:12,789 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-146
+2026-04-08 20:25:12,790 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-148
+2026-04-08 20:25:12,790 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-149
+2026-04-08 20:25:12,790 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-147
+2026-04-08 20:25:12,790 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-150
+2026-04-08 20:25:12,790 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-151
+2026-04-08 20:25:12,791 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-152
+2026-04-08 20:25:12,791 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-153
+2026-04-08 20:25:12,791 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-154
+2026-04-08 20:25:12,791 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-155
+2026-04-08 20:25:12,793 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-156
+2026-04-08 20:25:12,793 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-157
+2026-04-08 20:25:12,793 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-158
+2026-04-08 20:25:12,794 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-159
+2026-04-08 20:25:12,794 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-160
+2026-04-08 20:25:12,794 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-161
+2026-04-08 20:25:12,794 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-162
+2026-04-08 20:25:12,795 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-163
+2026-04-08 20:25:12,796 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-164
+2026-04-08 20:25:12,796 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-165
+2026-04-08 20:25:12,796 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-167
+2026-04-08 20:25:12,796 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-166
+2026-04-08 20:25:12,796 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-168
+2026-04-08 20:25:12,797 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-169
+2026-04-08 20:25:12,797 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-170
+2026-04-08 20:25:12,797 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-171
+2026-04-08 20:25:12,797 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-172
+2026-04-08 20:25:12,798 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-173
+2026-04-08 20:25:12,798 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-174
+2026-04-08 20:25:12,798 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-175
+2026-04-08 20:25:12,799 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-176
+2026-04-08 20:25:12,799 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-177
+2026-04-08 20:25:12,799 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-178
+2026-04-08 20:25:12,799 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-179
+2026-04-08 20:25:12,800 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-180
+2026-04-08 20:25:12,800 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-181
+2026-04-08 20:25:12,800 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-182
+2026-04-08 20:25:12,800 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-183
+2026-04-08 20:25:12,802 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-184
+2026-04-08 20:25:12,802 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-185
+2026-04-08 20:25:12,802 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-186
+2026-04-08 20:25:12,802 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-187
+2026-04-08 20:25:12,803 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-188
+2026-04-08 20:25:12,803 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-189
+2026-04-08 20:25:12,803 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-190
+2026-04-08 20:25:12,803 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-191
+2026-04-08 20:25:12,804 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-192
+2026-04-08 20:25:12,804 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-193
+2026-04-08 20:25:12,805 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-194
+2026-04-08 20:25:12,805 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-195
+2026-04-08 20:25:12,806 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-196
+2026-04-08 20:25:12,806 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-197
+2026-04-08 20:25:12,806 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-198
+2026-04-08 20:25:12,807 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-199
+2026-04-08 20:25:12,807 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-200
+2026-04-08 20:25:30,001 INFO o.a.j.r.Summariser: summary +  20975 in 00:00:30 =  699.1/s Avg:   223 Min:    66 Max:  1740 Err:     0 (0.00%) Active: 200 Started: 200 Finished: 0
+2026-04-08 20:25:30,002 INFO o.a.j.r.Summariser: summary =  89940 in 00:02:17 =  655.0/s Avg:   171 Min:    32 Max:  1740 Err:     0 (0.00%)
+2026-04-08 20:26:00,020 INFO o.a.j.r.Summariser: summary +  19913 in 00:00:30 =  663.3/s Avg:   301 Min:   158 Max:  1421 Err:     0 (0.00%) Active: 200 Started: 200 Finished: 0
+2026-04-08 20:26:00,021 INFO o.a.j.r.Summariser: summary = 109853 in 00:02:47 =  656.5/s Avg:   194 Min:    32 Max:  1740 Err:     0 (0.00%)
+2026-04-08 20:26:30,013 INFO o.a.j.r.Summariser: summary +  21314 in 00:00:30 =  710.6/s Avg:   281 Min:   168 Max:   624 Err:     0 (0.00%) Active: 200 Started: 200 Finished: 0
+2026-04-08 20:26:30,014 INFO o.a.j.r.Summariser: summary = 131167 in 00:03:17 =  664.7/s Avg:   208 Min:    32 Max:  1740 Err:     0 (0.00%)
+2026-04-08 20:27:00,002 INFO o.a.j.r.Summariser: summary +  19274 in 00:00:30 =  642.7/s Avg:   311 Min:   175 Max:   784 Err:     0 (0.00%) Active: 200 Started: 200 Finished: 0
+2026-04-08 20:27:00,002 INFO o.a.j.r.Summariser: summary = 150441 in 00:03:47 =  661.8/s Avg:   221 Min:    32 Max:  1740 Err:     0 (0.00%)
+2026-04-08 20:27:12,816 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-201
+2026-04-08 20:27:12,817 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-203
+2026-04-08 20:27:12,817 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-202
+2026-04-08 20:27:12,817 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-204
+2026-04-08 20:27:12,817 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-205
+2026-04-08 20:27:12,817 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-206
+2026-04-08 20:27:12,817 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-207
+2026-04-08 20:27:12,817 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-208
+2026-04-08 20:27:12,817 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-209
+2026-04-08 20:27:12,818 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-210
+2026-04-08 20:27:12,818 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-211
+2026-04-08 20:27:12,818 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-212
+2026-04-08 20:27:12,819 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-213
+2026-04-08 20:27:12,819 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-214
+2026-04-08 20:27:12,819 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-215
+2026-04-08 20:27:12,819 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-216
+2026-04-08 20:27:12,820 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-217
+2026-04-08 20:27:12,820 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-218
+2026-04-08 20:27:12,820 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-219
+2026-04-08 20:27:12,820 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-220
+2026-04-08 20:27:12,820 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-221
+2026-04-08 20:27:12,820 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-222
+2026-04-08 20:27:12,821 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-223
+2026-04-08 20:27:12,821 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-224
+2026-04-08 20:27:12,821 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-225
+2026-04-08 20:27:12,821 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-226
+2026-04-08 20:27:12,821 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-227
+2026-04-08 20:27:12,821 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-228
+2026-04-08 20:27:12,823 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-229
+2026-04-08 20:27:12,823 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-230
+2026-04-08 20:27:12,823 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-231
+2026-04-08 20:27:12,823 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-232
+2026-04-08 20:27:12,824 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-233
+2026-04-08 20:27:12,824 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-234
+2026-04-08 20:27:12,824 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-235
+2026-04-08 20:27:12,825 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-237
+2026-04-08 20:27:12,825 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-236
+2026-04-08 20:27:12,825 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-238
+2026-04-08 20:27:12,825 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-239
+2026-04-08 20:27:12,825 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-240
+2026-04-08 20:27:12,826 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-242
+2026-04-08 20:27:12,826 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-241
+2026-04-08 20:27:12,826 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-243
+2026-04-08 20:27:12,827 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-244
+2026-04-08 20:27:12,827 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-245
+2026-04-08 20:27:12,827 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-246
+2026-04-08 20:27:12,827 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-247
+2026-04-08 20:27:12,828 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-248
+2026-04-08 20:27:12,828 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-249
+2026-04-08 20:27:12,828 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-250
+2026-04-08 20:27:12,829 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-251
+2026-04-08 20:27:12,829 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-252
+2026-04-08 20:27:12,829 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-253
+2026-04-08 20:27:12,829 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-254
+2026-04-08 20:27:12,829 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-255
+2026-04-08 20:27:12,830 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-256
+2026-04-08 20:27:12,831 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-257
+2026-04-08 20:27:12,831 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-258
+2026-04-08 20:27:12,831 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-259
+2026-04-08 20:27:12,832 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-260
+2026-04-08 20:27:12,832 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-261
+2026-04-08 20:27:12,832 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-262
+2026-04-08 20:27:12,832 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-263
+2026-04-08 20:27:12,833 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-264
+2026-04-08 20:27:12,833 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-265
+2026-04-08 20:27:12,833 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-266
+2026-04-08 20:27:12,834 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-268
+2026-04-08 20:27:12,834 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-267
+2026-04-08 20:27:12,835 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-270
+2026-04-08 20:27:12,835 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-271
+2026-04-08 20:27:12,835 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-272
+2026-04-08 20:27:12,835 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-269
+2026-04-08 20:27:12,836 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-274
+2026-04-08 20:27:12,836 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-275
+2026-04-08 20:27:12,836 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-273
+2026-04-08 20:27:12,836 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-276
+2026-04-08 20:27:12,836 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-277
+2026-04-08 20:27:12,837 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-278
+2026-04-08 20:27:12,837 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-279
+2026-04-08 20:27:12,838 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-280
+2026-04-08 20:27:12,838 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-281
+2026-04-08 20:27:12,838 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-282
+2026-04-08 20:27:12,838 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-283
+2026-04-08 20:27:12,839 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-284
+2026-04-08 20:27:12,839 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-285
+2026-04-08 20:27:12,840 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-286
+2026-04-08 20:27:12,840 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-287
+2026-04-08 20:27:12,840 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-288
+2026-04-08 20:27:12,841 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-289
+2026-04-08 20:27:12,841 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-290
+2026-04-08 20:27:12,842 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-291
+2026-04-08 20:27:12,843 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-292
+2026-04-08 20:27:12,843 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-293
+2026-04-08 20:27:12,843 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-294
+2026-04-08 20:27:12,843 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-295
+2026-04-08 20:27:12,844 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-296
+2026-04-08 20:27:12,844 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-297
+2026-04-08 20:27:12,845 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-298
+2026-04-08 20:27:12,845 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-299
+2026-04-08 20:27:12,846 INFO o.a.j.t.JMeterThread: Thread started: bzm - Concurrency Thread Group - CRUD-ThreadStarter 1-300
+2026-04-08 20:27:30,004 INFO o.a.j.r.Summariser: summary +  20716 in 00:00:30 =  690.5/s Avg:   370 Min:   193 Max:   805 Err:     0 (0.00%) Active: 300 Started: 300 Finished: 0
+2026-04-08 20:27:30,005 INFO o.a.j.r.Summariser: summary = 171157 in 00:04:17 =  665.2/s Avg:   239 Min:    32 Max:  1740 Err:     0 (0.00%)
+2026-04-08 20:28:00,004 INFO o.a.j.r.Summariser: summary +  20482 in 00:00:30 =  682.7/s Avg:   439 Min:   238 Max:  2096 Err:     0 (0.00%) Active: 300 Started: 300 Finished: 0
+2026-04-08 20:28:00,004 INFO o.a.j.r.Summariser: summary = 191639 in 00:04:47 =  667.0/s Avg:   261 Min:    32 Max:  2096 Err:     0 (0.00%)
+2026-04-08 20:28:08,743 INFO o.a.j.r.ResultCollector: Shutdown hook started
+2026-04-08 20:28:08,743 INFO o.a.j.r.ResultCollector: Shutdown hook ended
