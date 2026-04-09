@@ -2,7 +2,7 @@
 
 import { cn } from "@/lib/utils";
 import { MessageSquare, Plus, X, Database, CalendarClock } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { UploadModal } from "./UploadModal";
 import { StudyPlanModal } from "./StudyPlanModal";
 
@@ -35,6 +35,14 @@ export function Sidebar({ isOpen, onClose, currentSessionId, onSelectSession, re
   const [isLoadingSessions, setIsLoadingSessions] = useState(false);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const [isStudyPlanOpen, setIsStudyPlanOpen] = useState(false);
+  const currentSessionIdRef = useRef(currentSessionId);
+  const onSelectSessionRef = useRef(onSelectSession);
+  const hasResolvedInitialSessionRef = useRef(false);
+
+  useEffect(() => {
+    currentSessionIdRef.current = currentSessionId;
+    onSelectSessionRef.current = onSelectSession;
+  }, [currentSessionId, onSelectSession]);
 
   const loadSessions = useCallback((targetPage: number, append: boolean) => {
     return fetch(`/api/agent/history/sessions?page=${targetPage}&size=${SESSION_PAGE_SIZE}`)
@@ -44,12 +52,28 @@ export function Sidebar({ isOpen, onClose, currentSessionId, onSelectSession, re
           setSessions(data);
           setPage(1);
           setHasNext(false);
+
+          if (!append && targetPage === 1 && !hasResolvedInitialSessionRef.current) {
+            const hasCurrent = data.some(session => session.memoryId === currentSessionIdRef.current);
+            if (!hasCurrent && data.length > 0) {
+              onSelectSessionRef.current(data[0].memoryId);
+            }
+            hasResolvedInitialSessionRef.current = true;
+          }
           return;
         }
         const items = Array.isArray(data?.items) ? data.items : [];
         setSessions(prev => (append ? [...prev, ...items] : items));
         setPage(data?.page ?? targetPage);
         setHasNext(Boolean(data?.hasNext));
+
+        if (!append && targetPage === 1 && !hasResolvedInitialSessionRef.current) {
+          const hasCurrent = items.some(session => session.memoryId === currentSessionIdRef.current);
+          if (!hasCurrent && items.length > 0) {
+            onSelectSessionRef.current(items[0].memoryId);
+          }
+          hasResolvedInitialSessionRef.current = true;
+        }
       })
       .catch(err => console.error("Failed to fetch sessions", err));
   }, []);

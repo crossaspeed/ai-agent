@@ -7,7 +7,7 @@ import { Menu } from "lucide-react";
 
 export default function Home() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [currentSessionId, setCurrentSessionId] = useState<number>(1);
+  const [currentSessionId, setCurrentSessionId] = useState<number>(() => Date.now());
   const [refreshKey, setRefreshKey] = useState<number>(0);
 
   return (
