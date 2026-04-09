@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 export interface Topic {
   id: string;
@@ -7,22 +7,54 @@ export interface Topic {
   docCount: number;
 }
 
+interface TopicPageResponse {
+  items: Topic[];
+  page: number;
+  size: number;
+  hasNext: boolean;
+}
+
+const TOPICS_PAGE_SIZE = 20;
+
 export function DataCards({ onSelect }: { onSelect: (topic: string) => void }) {
   const [topics, setTopics] = useState<Topic[]>([]);
+  const [page, setPage] = useState(1);
+  const [hasNext, setHasNext] = useState(false);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetch('/api/knowledge/topics')
+  const loadTopics = useCallback((targetPage: number, append: boolean) => {
+    return fetch(`/api/knowledge/topics?page=${targetPage}&size=${TOPICS_PAGE_SIZE}`)
       .then(res => res.json())
-      .then(data => {
-        setTopics(data);
-        setLoading(false);
-      })
+      .then((data: TopicPageResponse | Topic[]) => {
+        if (Array.isArray(data)) {
+          setTopics(data);
+          setPage(1);
+          setHasNext(false);
+          return;
+        }
+        const items = Array.isArray(data?.items) ? data.items : [];
+        setTopics(prev => (append ? [...prev, ...items] : items));
+        setPage(data?.page ?? targetPage);
+        setHasNext(Boolean(data?.hasNext));
+      });
+  }, []);
+
+  useEffect(() => {
+    loadTopics(1, false)
+      .then(() => setLoading(false))
       .catch(err => {
         console.error("Failed to load topics:", err);
         setLoading(false);
       });
-  }, []);
+  }, [loadTopics]);
+
+  const handleLoadMore = () => {
+    setIsLoadingMore(true);
+    loadTopics(page + 1, true)
+      .catch(err => console.error("Failed to load more topics:", err))
+      .finally(() => setIsLoadingMore(false));
+  };
 
   if (loading) return null;
   if (topics.length === 0) return null;
@@ -53,6 +85,16 @@ export function DataCards({ onSelect }: { onSelect: (topic: string) => void }) {
           </div>
         </motion.div>
       ))}
+      {hasNext && (
+        <button
+          type="button"
+          onClick={handleLoadMore}
+          disabled={isLoadingMore}
+          className="col-span-full mt-2 p-3 rounded-2xl border border-slate-200 bg-white hover:bg-slate-50 text-sm text-slate-600 disabled:opacity-60"
+        >
+          {isLoadingMore ? "加载中..." : "加载更多主题"}
+        </button>
+      )}
     </div>
   );
 }

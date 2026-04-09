@@ -11,11 +11,16 @@ import dev.langchain4j.store.embedding.EmbeddingStoreIngestor;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import com.it.ai.aiagent.store.TopicRepository;
 import com.it.ai.aiagent.bean.Topic;
+import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 
 import java.io.InputStream;
@@ -27,6 +32,7 @@ import java.util.Map;
 @RequestMapping("/knowledge")
 @org.springframework.web.bind.annotation.CrossOrigin(origins = "*")
 public class KnowledgeController {
+    private static final int MAX_PAGE_SIZE = 100;
 
     @Autowired
     private EmbeddingModel embeddingModel;
@@ -39,8 +45,26 @@ public class KnowledgeController {
 
     @Operation(summary = "获取所有已上传的主题")
     @GetMapping("/topics")
-    public List<Topic> getTopics() {
-        return topicRepository.findAll();
+    public TopicPageResult getTopics(
+            @RequestParam(value = "page", defaultValue = "1") Integer page,
+            @RequestParam(value = "size", defaultValue = "20") Integer size) {
+        int safePage = Math.max(page, 1);
+        int safeSize = Math.min(Math.max(size, 1), MAX_PAGE_SIZE);
+        PageRequest pageable = PageRequest.of(
+                safePage - 1,
+                safeSize,
+                Sort.by(
+                        Sort.Order.desc("updatedAt"),
+                        Sort.Order.asc("name")
+                )
+        );
+
+        Page<TopicRepository.TopicSummaryProjection> topicPage = topicRepository.findTopicSummaries(pageable);
+        List<TopicSummary> items = new ArrayList<>();
+        for (TopicRepository.TopicSummaryProjection topic : topicPage.getContent()) {
+            items.add(new TopicSummary(topic.getId(), topic.getName(), topic.getDocCount()));
+        }
+        return new TopicPageResult(items, safePage, safeSize, topicPage.hasNext());
     }
 
     @Operation(summary = "上传文档到向量数据库")
@@ -82,13 +106,16 @@ public class KnowledgeController {
 
             // mongoDB这里存储topic的数据，然后进行计数的工作
             Topic t = topicRepository.findByName(topic);
+            Instant now = Instant.now();
             if (t == null) {
                 t = new Topic();
                 t.setName(topic);
                 t.setDocCount(1);
+                t.setCreatedAt(now);
             } else {
                 t.setDocCount(t.getDocCount() + 1);
             }
+            t.setUpdatedAt(now);
             topicRepository.save(t);
             
             result.put("status", "success");
@@ -98,5 +125,11 @@ public class KnowledgeController {
             result.put("message", e.getMessage());
         }
         return result;
+    }
+
+    public record TopicSummary(String id, String name, int docCount) {
+    }
+
+    public record TopicPageResult(List<TopicSummary> items, int page, int size, boolean hasNext) {
     }
 }
