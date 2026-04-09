@@ -2,7 +2,7 @@
 
 import { cn } from "@/lib/utils";
 import { MessageSquare, Plus, X, Database, CalendarClock } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { UploadModal } from "./UploadModal";
 import { StudyPlanModal } from "./StudyPlanModal";
 
@@ -10,6 +10,15 @@ interface Session {
   memoryId: number;
   title: string;
 }
+
+interface SessionPageResponse {
+  items: Session[];
+  page: number;
+  size: number;
+  hasNext: boolean;
+}
+
+const SESSION_PAGE_SIZE = 20;
 
 interface SidebarProps {
   isOpen: boolean;
@@ -21,19 +30,39 @@ interface SidebarProps {
 
 export function Sidebar({ isOpen, onClose, currentSessionId, onSelectSession, refreshKey = 0 }: SidebarProps) {
   const [sessions, setSessions] = useState<Session[]>([]);
+  const [page, setPage] = useState(1);
+  const [hasNext, setHasNext] = useState(false);
+  const [isLoadingSessions, setIsLoadingSessions] = useState(false);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const [isStudyPlanOpen, setIsStudyPlanOpen] = useState(false);
 
-  useEffect(() => {
-    fetch('/api/agent/history/sessions')
+  const loadSessions = useCallback((targetPage: number, append: boolean) => {
+    return fetch(`/api/agent/history/sessions?page=${targetPage}&size=${SESSION_PAGE_SIZE}`)
       .then(res => res.json())
-      .then(data => {
+      .then((data: SessionPageResponse | Session[]) => {
         if (Array.isArray(data)) {
           setSessions(data);
+          setPage(1);
+          setHasNext(false);
+          return;
         }
+        const items = Array.isArray(data?.items) ? data.items : [];
+        setSessions(prev => (append ? [...prev, ...items] : items));
+        setPage(data?.page ?? targetPage);
+        setHasNext(Boolean(data?.hasNext));
       })
       .catch(err => console.error("Failed to fetch sessions", err));
-  }, [refreshKey]);
+  }, []);
+
+  useEffect(() => {
+    loadSessions(1, false);
+  }, [loadSessions, refreshKey]);
+
+  const handleLoadMore = () => {
+    setIsLoadingSessions(true);
+    loadSessions(page + 1, true)
+      .finally(() => setIsLoadingSessions(false));
+  };
 
   return (
     <>
@@ -88,6 +117,15 @@ export function Sidebar({ isOpen, onClose, currentSessionId, onSelectSession, re
               <span className="truncate">{session.title}</span>
             </button>
           ))}
+          {hasNext && (
+            <button
+              onClick={handleLoadMore}
+              disabled={isLoadingSessions}
+              className="w-full mt-2 p-2 rounded-2xl border border-slate-200 bg-white hover:bg-slate-50 text-xs text-slate-600 disabled:opacity-60"
+            >
+              {isLoadingSessions ? "加载中..." : "加载更多"}
+            </button>
+          )}
         </div>
       </aside>
 

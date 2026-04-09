@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -203,33 +204,9 @@ public class XiaocController {
 
     @Operation(summary = "获取所有历史会话列表")
     @GetMapping("/history/sessions")
-    public List<java.util.Map<String, Object>> getSessions() {
-        List<com.it.ai.aiagent.bean.ChatMessages> allMessages = mongoChatMemoryStore.getAllSessions();
-        return allMessages.stream().map(cm -> {
-            java.util.Map<String, Object> map = new java.util.HashMap<>();
-            map.put("memoryId", cm.getMemoryId());
-            
-            String title = "新对话 " + cm.getMemoryId();
-            try {
-                List<ChatMessage> parsedMsgs = dev.langchain4j.data.message.ChatMessageDeserializer.messagesFromJson(cm.getContent());
-                for (ChatMessage msg : parsedMsgs) {
-                    //提取用户的第一句话当作标题
-                    if (msg instanceof dev.langchain4j.data.message.UserMessage) {
-                        String text = ((dev.langchain4j.data.message.UserMessage) msg).singleText();
-                        // 过滤掉 RAG 内容作为侧边栏标题
-                        if (text != null && text.contains("\n\nAnswer using the following information:\n")) {
-                            text = text.split("\n\nAnswer using the following information:\n")[0];
-                        }
-                        title = text;
-                        //如果用户的第一句话过长，那么就进行阶段的操作
-                        if (title.length() > 20) title = title.substring(0, 20) + "...";
-                        break;
-                    }
-                }
-            } catch (Exception e) {
-            }
-            map.put("title", title);
-            return map;
-        }).collect(java.util.stream.Collectors.toList());
+    public com.it.ai.aiagent.store.MongoChatMemoryStore.SessionPageResult getSessions(
+            @RequestParam(value = "page", defaultValue = "1") Integer page,
+            @RequestParam(value = "size", defaultValue = "20") Integer size) {
+        return mongoChatMemoryStore.getSessionPage(page, size);
     }
 }
