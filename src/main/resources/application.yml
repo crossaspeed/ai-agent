@@ -2,9 +2,9 @@ spring:
   application:
     name: ai-agent
   datasource:
-    url: ${MYSQL_JDBC_URL:jdbc:mysql://localhost:3306/ai_agent?useUnicode=true&characterEncoding=utf8&connectionCollation=utf8mb4_unicode_ci&serverTimezone=Asia/Shanghai}
-    username: ${MYSQL_USER:root}
-    password: ${MYSQL_PASSWORD:}
+    url: jdbc:mysql://localhost:3306/ai_agent?useUnicode=true&characterEncoding=utf8&connectionCollation=utf8mb4_unicode_ci&serverTimezone=Asia/Shanghai
+    username: root
+    password: kx6855253
     driver-class-name: com.mysql.cj.jdbc.Driver
   sql:
     init:
@@ -12,6 +12,7 @@ spring:
   data:
     mongodb:
       uri: mongodb://localhost:27017/chat_memory_db
+      auto-index-creation: true
     redis:
       host: ${REDIS_HOST:localhost}
       port: ${REDIS_PORT:6379}
@@ -25,26 +26,26 @@ langchain4j:
   open-ai:
     chat-model:
       base-url: https://api.deepseek.com
-      api-key: ${DEEPSEEK_API_KEY:}
+      api-key: sk-ffffb45d9ff64d30a0b61fcb100af8ee
       model-name: deepseek-chat
     embedding-model:
       base-url: https://aihubmix.com/v1
-      api-key: ${EMBEDDING_API_KEY:}
+      api-key: sk-7FSC8rpCuanVrFgMAbC4882fB993417aB0B9Aa346417A451
     streaming-chat-model:
-      api-key: ${DEEPSEEK_API_KEY:}
+      api-key: sk-ffffb45d9ff64d30a0b61fcb100af8ee
       model-name: deepseek-chat
       base-url: https://api.deepseek.com
 
 pinecone:
   api:
-    key: ${PINECONE_API_KEY:}
+    key: pcsk_2ws65f_HKen6nMKh7zCnEWSzi2tXCYTvJKYcBcqP7wHeRDfEGscvJ33hT3ojeVnkBfm13T
   index:
     name: agent-index
 
 feishu:
-  app-id: ${FEISHU_APP_ID:}
-  app-secret: ${FEISHU_APP_SECRET:}
-  bot-open-id: ${feishu-bot-open-id:}
+  app-id: cli_a94deb3b6cf89cce
+  app-secret: ZEFUg3I3OowRGZBvnXJobgMWQnavzNlV
+  bot-open-id: ou_20fe052a76c987a8831a3e2c6496fbba
   callback-verification-token: ${feishu-callback-token:}
   long-connection:
     enabled: true
@@ -64,5 +65,17 @@ reminder:
     retry-delay-ms: 15000
     key-prefix: reminder
 
-
-
+# 上下文压缩配置
+memory:
+  compression:
+    enabled: true
+    async: true
+    tier1:
+      threshold: 12
+      preserve-recent: 8
+      max-summary-length: 300
+    tier2:
+      threshold: 18
+      max-ai-message-length: 500
+    tier3:
+      max-total-messages: 25
