@@ -37,6 +37,9 @@ build/
 .env.*
 !.env.example
 
+# Application configuration (may contain sensitive data)
+src/main/resources/application.yml
+
 # JMeter generated reports and result files
 /docs/jmeter/report-*/
 /docs/jmeter/result-crud-*
